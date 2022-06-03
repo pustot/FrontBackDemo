@@ -1,0 +1,43 @@
+.App {
+  font-family: sans-serif;
+  font-size: 1.5em;
+}
+
+body {
+	background: #141414;
+	color: #cccaca;
+	/*#25a0da;*/
+}
+
+textarea {
+  font-size: 1.1em;
+  width: 60%;
+  display: block;
+  background-color: #030303;
+  color: #cccaca;
+}
+
+table {
+  background-color: #030303;
+  color: #cccaca;
+  width: 20%;
+  margin: 1.5em auto;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+.results-table thead {
+  font-weight: bold;
+  text-align: center;
+  border: 2px solid #cccaca;
+}
+
+.results-table th,
+.results-table td {
+  border: 1px solid #cccaca;
+}
+
+
+.error {
+  color: #922;
+}

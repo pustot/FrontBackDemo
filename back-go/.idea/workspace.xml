@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f5485222-604a-4043-ab88-eb94f92d7bf9" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/back-go.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back-java-sprbt/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back-java-sprbt/.mvn/wrapper/maven-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back-java-sprbt/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back-java-sprbt/mvnw" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back-java-sprbt/mvnw.cmd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back-java-sprbt/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back-java-sprbt/src/main/java/com/ethany/demo/DemoApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back-java-sprbt/src/main/java/com/ethany/demo/controller/DemoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back-java-sprbt/src/main/resources/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back-java-sprbt/src/test/java/com/ethany/demo/DemoApplicationTests.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back-py-flask/app.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back-py-flask/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../front-react/src/utils/API.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.nvmrc" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/.nvmrc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/asset-manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/build/asset-manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/build/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/sql-wasm-2b277767061e6a2529fe1f2e6fe80b4a.wasm" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/build/sql-wasm-2b277767061e6a2529fe1f2e6fe80b4a.wasm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/static/css/main.29f1f53d.chunk.css" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/build/static/css/main.29f1f53d.chunk.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/static/css/main.29f1f53d.chunk.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/build/static/css/main.29f1f53d.chunk.css.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/static/js/2.5629083b.chunk.js" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/build/static/js/2.5629083b.chunk.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/static/js/2.5629083b.chunk.js.LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/build/static/js/2.5629083b.chunk.js.LICENSE.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/static/js/2.5629083b.chunk.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/build/static/js/2.5629083b.chunk.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/static/js/main.567d9263.chunk.js" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/build/static/js/main.567d9263.chunk.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/static/js/main.567d9263.chunk.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/build/static/js/main.567d9263.chunk.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/static/js/runtime-main.10ae0a35.js" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/build/static/js/runtime-main.10ae0a35.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/static/js/runtime-main.10ae0a35.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/build/static/js/runtime-main.10ae0a35.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../craco.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/craco.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/components/HanCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/src/components/HanCard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/components/HansContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/src/components/HansContainer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/components/ResultsTable.js" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/src/components/ResultsTable.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/mcpdict.db" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/src/mcpdict.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/../front-react/src/styles.css" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go Application" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" url="file://$USER_HOME$/sdk/go1.18.3" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2A36kWiBnumi725JpZOgLTqYFcg" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go Application",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "go.import.settings.migrated": "true",
+    "last_opened_file_path": "C:/Users/yang_",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="go build back-go" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+      <module name="back-go" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="back-go" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VgoProject">
+    <settings-migrated>true</settings-migrated>
+  </component>
+</project>
