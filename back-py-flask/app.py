@@ -6,17 +6,32 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-output = [{
-    'columns': ['unicode', 'mc'],
-    'values': [
-        ['2665', 'hello from Flask'],
-        ['4F6F', 'jang,ziang'],
-        ['5134', 'njang']
-    ]
-}]
+# output = [{
+#     'columns': ['unicode', 'mc'],
+#     'values': [
+#         ['2665', 'hello from Flask'],
+#         ['4F6F', 'jang,ziang'],
+#         ['5134', 'njang']
+#     ]
+# }]
+
+output = [
+    {
+        'id': '2665',
+        'mc': 'hello from Flask',
+    },
+    {
+        'id': '4F6F',
+        'mc': 'jang,ziang',
+    },
+    {
+        'id': '5134',
+        'mc': 'njang',
+    }
+]
 
 
-@app.route('/demo_search', methods=['POST'])
+@app.route('/hans', methods=['GET'])
 def demo_search():
     return {'data': output}
 

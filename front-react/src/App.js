@@ -105,21 +105,38 @@ function SQLRepl({ db }) {
       //   }
 
         // simple frontobaque test, dafor idle data
-        let res = [{
-          columns: ['unicode', 'mc'],
-          values: [
-            ['4F6F', 'jang,ziang'],
-            ['5134', 'njang']
-          ]
-        }];
-        setResults(res);
+        // let res = [{
+        //   columns: ['unicode', 'mc'],
+        //   values: [
+        //     ['4F6F', 'jang,ziang'],
+        //     ['5134', 'njang']
+        //   ]
+        // }];
+        //
+        // let res = [
+        //     {
+        //         'id': '2665',
+        //         'mc': 'hello from React',
+        //     },
+        //     {
+        //         'id': '4F6F',
+        //         'mc': 'jang,ziang',
+        //     },
+        //     {
+        //         'id': '5134',
+        //         'mc': 'njang',
+        //     }
+        // ];
+        // setResults(res);
+        // console.log(res)
 
-        const response = await API.post(
-          `/demo_search`,
+        const response = await API.get(
+          `/hans`,
           { }
         )
         setResults(response.data.data);
 
+        console.log(response)
 
       // setResults(db.exec(newsql)); // an array of objects is returned
       // console.log("Content is", db.exec(newsql));
@@ -176,13 +193,13 @@ function SQLRepl({ db }) {
         {
           !isCardMode?(
             // results contains one object per select statement in the query
-            results.map(({ columns, values }, i) => (
-              <ResultsTable key={i} columns={columns} values={values} />
+            results.map(({ id, mc }, i) => (
+              <ResultsTable key={i} columns={['unicode', 'mc']} values={[id, mc]} />
             ))
           ):(
-            results.map(({ columns, values }, i) => (
-              <HansContainer key={i} columns={columns} data={values}/>
-            ))
+            // results.map(({ id, mc }, i) => (
+              <HansContainer key={0} data={results}/>
+            // ))
           )
         }
       </pre>
