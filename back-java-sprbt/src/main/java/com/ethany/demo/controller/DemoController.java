@@ -18,24 +18,21 @@ public class DemoController {
 
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     public class Sqler implements Serializable {
-        private List<String> columns;
-        private List<List<String>> values;
+        private String id;
+        private String mc;
 
-        Sqler(List<String> cl, List<List<String>> val) {
-            columns = cl;
-            values = val;
+        Sqler(String id, String mc) {
+            this.id = id;
+            this.mc = mc;
         }
     }
 
-    Sqler asql = new Sqler(Arrays.asList("unicode", "mc"), Arrays.asList(
-            Arrays.asList("2764", "hello from Spring Boot"),
-            Arrays.asList("4F6F", "jang,ziang"),
-            Arrays.asList("5134", "njang")
-    ));
+    List<Sqler> output = Arrays.asList(
+            new Sqler("2764", "hello from Spring Boot"),
+            new Sqler("4F6F", "jang,ziang"),
+            new Sqler("5134", "njang"));
 
-    List<Sqler> output = Arrays.asList(asql);
-
-    @RequestMapping(value = "/demo_search", method = RequestMethod.POST)
+    @RequestMapping(value = "/hans", method = RequestMethod.GET)
     public Map<String, List<Sqler>> demoSearch() {
         Map<String, List<Sqler>> res = new HashMap<>();
         res.put("data", output);

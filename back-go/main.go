@@ -24,27 +24,24 @@ func CORSMiddleware() gin.HandlerFunc {
 
 func main() {
 	type Sqler struct {
-		Columns []string   `json:"columns"`
-		Values  [][]string `json:"values"`
+		Id string `json:"id"`
+		Mc string `json:"mc"`
 	}
-	sqler := Sqler{
-		Columns: []string{"unicode", "mc"},
-		Values: [][]string{
-			{"2766", "hello from Go!!"},
-			{"4F6F", "jang,ziang"},
-			{"5134", "njang"},
-		},
+	sqlers := []Sqler{
+		{"2766", "hello from Go!!"},
+		{"4F6F", "jang,ziang"},
+		{"5134", "njang"},
 	}
 
 	res := make(map[string][]Sqler)
-	res["data"] = []Sqler{sqler}
+	res["data"] = sqlers
 
 	r := gin.Default()
 	r.Use(CORSMiddleware())
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 	})
-	r.POST("/demo_search", func(c *gin.Context) {
+	r.GET("/hans", func(c *gin.Context) {
 		//c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.JSON(http.StatusOK, res)
 	})
