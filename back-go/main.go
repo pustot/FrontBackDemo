@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"sync"
+	"time"
 )
 
 func CORSMiddleware() gin.HandlerFunc {
@@ -22,7 +25,15 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
+func worker(id int) {
+	fmt.Printf("Worker %d starting\n", id)
+	time.Sleep(time.Second)
+	fmt.Printf("Worker %d done\n", id)
+}
+
 func main() {
+	var wg sync.WaitGroup
+
 	type Sqler struct {
 		Id string `json:"id"`
 		Mc string `json:"mc"`
@@ -42,7 +53,19 @@ func main() {
 		c.JSON(http.StatusOK, res)
 	})
 	r.GET("/hans", func(c *gin.Context) {
-		//c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+
+		// the example API function with concurrency
+		for i := 1; i <= 5; i++ {
+			wg.Add(1)
+			i := i
+
+			go func() {
+				defer wg.Done()
+				worker(i)
+			}()
+		}
+		wg.Wait()
+
 		c.JSON(http.StatusOK, res)
 	})
 	http.ListenAndServe(":5000", r)
