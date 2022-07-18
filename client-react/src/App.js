@@ -79,11 +79,6 @@ function SQLRepl() {
     }).catch((err) => responses.push(['ERROR: post 0', startpost0, performance.now(), err]));
   }
 
-  // Promise.allSettled([promget0, prompost0])
-  //   .then((resp) => {
-  //     setResults(responses);
-  //   });
-
   const handleClickRandom = () => {
     // let randHan = getRandom3500Han();
     // document.getElementById('queryTextarea').value = randHan;
@@ -93,14 +88,10 @@ function SQLRepl() {
 
   return (
     <Container className="App">
-      <h1>HanPoly</h1>
-      
-
       <textarea
         id="queryTextarea"
         onChange={(e) => exec(e.target.value)}
-        placeholder="Enter a Chinese character or romanization (MC pinyin, pinyin, jyutping etc.)
-                     No inspiration ? Try `文` or `myon`"
+        placeholder="Enter any character to activate a serial of tests"
       />
 
       <Stack direction="row" spacing={2}> 
@@ -129,9 +120,6 @@ function SQLRepl() {
           </Typography>
         ))
       }</div>
-      {/* <Typography variant="body1" gutterBottom> 
-          {JSON.stringify(results)}
-      </Typography> */}
     </Container>
   );
 }
