@@ -21,6 +21,8 @@ export default function App() {
   else return <SQLRepl/>;
 }
 
+let responses = [];
+
 /**
  * A simple SQL read-eval-print-loop
  * @param 
@@ -29,7 +31,6 @@ function SQLRepl() {
   const [error, setError] = useState(null);
   const [results, setResults] = useState([]);
   const [isCardMode, setIsCardMode] = useState(true);
-  let responses = [];
 
   function exec(sql) {
     if (sql == '') return;
@@ -73,16 +74,15 @@ function SQLRepl() {
         API.delete(
           `/api/items/` + response.data.id,
           {}
-        ).then((deleteresp) => responses.push(['delete 0', startdelete0.toFixed(3), performance.now().toFixed(3), deleteresp.data]))
-        .catch((err) => responses.push(['ERROR: delete 0', startdelete0, performance.now(), err]));
+        ).then((deleteresp) => {
+          responses.push(['delete 0', startdelete0.toFixed(3), performance.now().toFixed(3), deleteresp.data])
+          setResults(responses);
+        }).catch((err) => responses.push(['ERROR: delete 0', startdelete0, performance.now(), err]));
       }).catch((err) => responses.push(['ERROR: put 0', startput0, performance.now(), err]));
     }).catch((err) => responses.push(['ERROR: post 0', startpost0, performance.now(), err]));
   }
 
-  const handleClickRandom = () => {
-    // let randHan = getRandom3500Han();
-    // document.getElementById('queryTextarea').value = randHan;
-    // exec(randHan);
+  const handleClickRefresh = () => {
     setResults(responses);
   }
 
@@ -104,12 +104,10 @@ function SQLRepl() {
             />} label="Card Mode" />
 
         <Tooltip title="to handle uncertainty of React setState()">
-          <Button onClick={handleClickRandom}>Refresh Result</Button>
+          <Button onClick={handleClickRefresh}>Refresh Result</Button>
         </Tooltip>
-        
 
       </Stack>
-      
 
       <pre className="error">{(error || "").toString()}</pre>
 
@@ -120,6 +118,7 @@ function SQLRepl() {
           </Typography>
         ))
       }</div>
+
     </Container>
   );
 }
