@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
+	"sync"
 )
 
 type item struct {
@@ -28,6 +29,8 @@ var exampleID = uuid.New()
 var items = map[uuid.UUID]item{
 	exampleID: {ID: exampleID.String(), Name: "example", Count: 2, Price: 9.15}}
 
+var m sync.RWMutex
+
 func main() {
 	id := uuid.New()
 	fmt.Println(id.String())
@@ -46,10 +49,17 @@ func main() {
 
 // getItems responds with the list of all albums as JSON.
 func getItems(c *gin.Context) {
-	res := make([]item, 0, len(items))
-	for _, val := range items {
-		res = append(res, val)
-	}
+	res := make(chan []item)
+	go func() {
+		m.RLock()
+		r := make([]item, 0, len(items))
+		for _, val := range items {
+			r = append(r, val)
+		}
+		m.RUnlock()
+		res <- r
+	}()
+	<-res
 	// c.IndentedJSON(http.StatusOK, items)
 	c.JSON(http.StatusOK, res)
 }
@@ -130,13 +140,13 @@ func deleteItemByID(c *gin.Context) {
 		return
 	}
 
-	if _, ok := items[id]; !ok {
+	res, ok := items[id]
+	if !ok {
 		c.JSON(http.StatusNotFound, gin.H{"message": "item not found"})
 		return
 	}
 
 	// Add the new album to the slice.
-	res := items[id]
 	delete(items, id)
 	c.JSON(http.StatusOK, res)
 }
