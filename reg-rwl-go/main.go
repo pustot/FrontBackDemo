@@ -10,16 +10,16 @@ import (
 )
 
 type item struct {
-	ID    string  `json:"id"`
-	Name  string  `json:"name"`
-	Count int     `json:"count"`
-	Price float64 `json:"price"`
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+	//Price float64 `json:"price"`
 }
 
 type itemWoID struct {
-	Name  string  `json:"name"`
-	Count int     `json:"count"`
-	Price float64 `json:"price"`
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+	//Price float64 `json:"price"`
 }
 
 // https://stackoverflow.com/questions/15130321/is-there-a-method-to-generate-a-uuid-with-go-language
@@ -27,7 +27,7 @@ var exampleID = uuid.New()
 
 // https://gobyexample.com/maps
 var items = map[uuid.UUID]item{
-	exampleID: {ID: exampleID.String(), Name: "example", Count: 2, Price: 9.15}}
+	exampleID: {ID: exampleID.String(), Name: "example", Count: 2}} //, Price: 9.15
 
 var m sync.RWMutex
 
@@ -38,49 +38,35 @@ func main() {
 	// https://go.dev/doc/tutorial/web-service-gin
 	router := gin.Default()
 	router.Use(CORSMiddleware())
-	router.GET("/items", getItems)
-	router.GET("/items/:id", getItemByID)
-	router.POST("/items", postItems)
-	router.PUT("/items/:id", putItemByID)
-	router.DELETE("/items/:id", deleteItemByID)
+	// as said here: https://github.com/gin-gonic/gin/issues/1335
+	// > that serves each request by an individual goroutine
+	// so no need to write goroutine for each req explicitly
+	router.GET("/api/items", getItems)
+	router.GET("/api/items/:id", getItemByID)
+	router.POST("/api/items", postItems)
+	router.PUT("/api/items/:id", putItemByID)
+	router.DELETE("/api/items/:id", deleteItemByID)
 
 	router.Run("localhost:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
+//func sleep(msg string) {
+//	fmt.Println("sleeping " + msg)
+//	time.Sleep(1 * time.Second)
+//}
+
 // getItems responds with the list of all albums as JSON.
 func getItems(c *gin.Context) {
-	res := make(chan []item)
-	go func() {
-		m.RLock()
-		r := make([]item, 0, len(items))
-		for _, val := range items {
-			r = append(r, val)
-		}
-		m.RUnlock()
-		res <- r
-	}()
-	<-res
+	m.RLock()
+	//sleep("getItems R")
+	res := make([]item, 0, len(items))
+	for _, val := range items {
+		res = append(res, val)
+	}
+	m.RUnlock()
+	//sleep("getItems R Unlocked")
 	// c.IndentedJSON(http.StatusOK, items)
 	c.JSON(http.StatusOK, res)
-}
-
-// postItems adds an album from JSON received in the request body.
-func postItems(c *gin.Context) {
-	var rawItem itemWoID
-
-	// Call BindJSON to bind the received JSON to
-	// newAlbum.
-	if err := c.BindJSON(&rawItem); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	newId := uuid.New()
-	newItem := item{ID: newId.String(), Name: rawItem.Name, Count: rawItem.Count, Price: rawItem.Price}
-
-	// Add the new album to the slice.
-	items[newId] = newItem
-	c.JSON(http.StatusCreated, newId)
 }
 
 // getItemByID locates the album whose ID value matches the id
@@ -95,12 +81,40 @@ func getItemByID(c *gin.Context) {
 
 	// Loop over the list of albums, looking for
 	// an album whose ID value matches the parameter.
-	if val, ok := items[id]; ok {
+	m.RLock()
+	//sleep("getItemByID R")
+	val, ok := items[id]
+	m.RUnlock()
+	//sleep("getItemByID R Unlocked")
+	if ok {
 		c.JSON(http.StatusOK, val)
 		return
 	}
 
 	c.JSON(http.StatusNotFound, gin.H{"message": "item not found"})
+}
+
+// postItems adds an album from JSON received in the request body.
+func postItems(c *gin.Context) {
+	var rawItem itemWoID
+
+	// Call BindJSON to bind the received JSON to
+	// newAlbum.
+	if err := c.BindJSON(&rawItem); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	newId := uuid.New()
+	newItem := item{ID: newId.String(), Name: rawItem.Name, Count: rawItem.Count} // , Price: rawItem.Price
+
+	// Add the new album to the slice.
+	m.Lock()
+	//sleep("postItems W")
+	items[newId] = newItem
+	m.Unlock()
+	//sleep("postItems W Unlocked")
+	c.JSON(http.StatusCreated, newItem)
 }
 
 func putItemByID(c *gin.Context) {
@@ -111,7 +125,12 @@ func putItemByID(c *gin.Context) {
 		return
 	}
 
-	if _, ok := items[id]; !ok {
+	m.RLock()
+	//sleep("putItemByID R")
+	_, ok := items[id]
+	m.RUnlock()
+	//sleep("putItemByID R Unlocked")
+	if !ok {
 		c.JSON(http.StatusNotFound, gin.H{"message": "item not found"})
 		return
 	}
@@ -125,10 +144,14 @@ func putItemByID(c *gin.Context) {
 		return
 	}
 
-	newItem := item{ID: id.String(), Name: rawItem.Name, Count: rawItem.Count, Price: rawItem.Price}
+	newItem := item{ID: id.String(), Name: rawItem.Name, Count: rawItem.Count} // , Price: rawItem.Price
 
 	// Add the new album to the slice.
+	m.Lock()
+	//sleep("putItemByID W")
 	items[id] = newItem
+	m.Unlock()
+	//sleep("putItemByID W Unlocked")
 	c.JSON(http.StatusCreated, newItem)
 }
 
@@ -140,14 +163,22 @@ func deleteItemByID(c *gin.Context) {
 		return
 	}
 
+	m.RLock()
+	//sleep("deleteItemByID R")
 	res, ok := items[id]
+	m.RUnlock()
+	//sleep("deleteItemByID R Unlocked")
 	if !ok {
 		c.JSON(http.StatusNotFound, gin.H{"message": "item not found"})
 		return
 	}
 
 	// Add the new album to the slice.
+	m.Lock()
+	//sleep("deleteItemByID W")
 	delete(items, id)
+	m.Unlock()
+	//sleep("deleteItemByID W Unlocked")
 	c.JSON(http.StatusOK, res)
 }
 
@@ -157,7 +188,7 @@ func CORSMiddleware() gin.HandlerFunc {
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Access-Control-Allow-Credentials", "true")
 		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-		c.Header("Access-Control-Allow-Methods", "POST,HEAD,PATCH, OPTIONS, GET, PUT")
+		c.Header("Access-Control-Allow-Methods", "POST,HEAD,PATCH, OPTIONS, GET, PUT, DELETE")
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)

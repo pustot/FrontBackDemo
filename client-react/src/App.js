@@ -80,7 +80,18 @@ function SQLRepl() {
         }).catch((err) => responses.push(['ERROR: delete 0', startdelete0, performance.now(), err]));
       }).catch((err) => responses.push(['ERROR: put 0', startput0, performance.now(), err]));
     }).catch((err) => responses.push(['ERROR: post 0', startpost0, performance.now(), err]));
+
+    let startgetall1 = performance.now();
+    API.get(
+      `/api/items`,
+      { }
+    ).then( (response) => {
+      responses.push(['get all 1', startgetall1.toFixed(3), performance.now().toFixed(3), response.data]);
+      // setResults(responses);
+    }).catch((err) => responses.push(['ERROR: get all 1', startgetall1.toFixed(3), performance.now().toFixed(3), err]));
   }
+
+  
 
   const handleClickRefresh = () => {
     setResults(responses);
