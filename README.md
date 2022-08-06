@@ -11,4 +11,5 @@ servoclienodesign
 design|folder|note
 -|-|-
 Regular sale with RWLock in Go|`reg-rwl-go`|
+Regular sale with RWLock in Java|`reg-rwl-java`|
 Client, in React.JS|`client-react`|now for RegSale
