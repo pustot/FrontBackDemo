@@ -16,6 +16,10 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import API from './utils/API'
 
+const REG_READ_PER_REQ_W = 3;
+const REG_WRITE_PER_REQ_W = 3;
+const REG_READ_PER_REQ_R = 3;
+
 export default function App() {
   let responses = [];
 
@@ -24,26 +28,24 @@ export default function App() {
   // req senders use the same loading switch
   const [loading, setLoading] = React.useState(false);
 
-  function sendRegularReq() {
-    setLoading(true);
-    // await new Promise(r => setTimeout(r, 2000));
-    responses = [];
-
+  async function promiseGetAll(ind) {
     let startgetall0 = performance.now();
-    API.get(
+    await API.get(
       `/api/items`,
       { }
     ).then( (response) => {
-      responses.push(['get all 0', startgetall0.toFixed(3), performance.now().toFixed(3), response.data]);
+      responses.push(['get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), response.data]);
       // setResults(responses);
-    }).catch((err) => responses.push(['ERROR: get all 0', startgetall0.toFixed(3), performance.now().toFixed(3), err]));
+    }).catch((err) => responses.push(['ERROR: get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), err]));
+  }
 
+  async function promisePostGetPutDelete(ind) {
     let startpost0 = performance.now();
-    API.post(
+    await API.post(
       `/api/items`,
-      {name: "phone test 0", count: 2}
+      {name: "phone test " + ind, count: 2}
     ).then( (response) => {
-      responses.push(['post 0', startpost0.toFixed(3), performance.now().toFixed(3), response.data]);
+      responses.push(['post ' + ind, startpost0.toFixed(3), performance.now().toFixed(3), response.data]);
       // setResults(responses);
 
       let startget0 = performance.now();
@@ -51,37 +53,55 @@ export default function App() {
         `/api/items/` + response.data.id,
         { }
       ).then( (getresp) => {
-        responses.push(['get 0', startget0.toFixed(3), performance.now().toFixed(3), getresp.data]);
+        responses.push(['get ' + ind, startget0.toFixed(3), performance.now().toFixed(3), getresp.data]);
         // setResults(responses);
-      }).catch((err) => responses.push(['ERROR: get 0', startget0, performance.now(), err]));
+      }).catch((err) => responses.push(['ERROR: get ' + ind, startget0, performance.now(), err]));
 
 
       let startput0 = performance.now();
       API.put(
         `/api/items/` + response.data.id,
-        {name: "phone test 0", count: 1}
+        {name: "phone test " + ind, count: 1}
       ).then((putresp) => {
-        responses.push(['put 0', startput0.toFixed(3), performance.now().toFixed(3), putresp.data]);
+        responses.push(['put ' + ind, startput0.toFixed(3), performance.now().toFixed(3), putresp.data]);
 
         let startdelete0 = performance.now();
         API.delete(
           `/api/items/` + response.data.id,
           {}
         ).then((deleteresp) => {
-          responses.push(['delete 0', startdelete0.toFixed(3), performance.now().toFixed(3), deleteresp.data])
+          responses.push(['delete ' + ind, startdelete0.toFixed(3), performance.now().toFixed(3), deleteresp.data])
           setResults(responses);
-        }).catch((err) => responses.push(['ERROR: delete 0', startdelete0, performance.now(), err]));
-      }).catch((err) => responses.push(['ERROR: put 0', startput0, performance.now(), err]));
-    }).catch((err) => responses.push(['ERROR: post 0', startpost0, performance.now(), err]));
+        }).catch((err) => responses.push(['ERROR: delete ' + ind, startdelete0, performance.now(), err]));
+      }).catch((err) => responses.push(['ERROR: put ' + ind, startput0, performance.now(), err]));
+    }).catch((err) => responses.push(['ERROR: post ' + ind, startpost0, performance.now(), err]));
+  }
 
-    let startgetall1 = performance.now();
-    API.get(
-      `/api/items`,
-      { }
-    ).then( (response) => {
-      responses.push(['get all 1', startgetall1.toFixed(3), performance.now().toFixed(3), response.data]);
-      // setResults(responses);
-    }).catch((err) => responses.push(['ERROR: get all 1', startgetall1.toFixed(3), performance.now().toFixed(3), err]));
+  function sendRegularReq() {
+    setLoading(true);
+    // await new Promise(r => setTimeout(r, 2000));
+    responses = [];
+
+    var reqs = [];
+    // W = 1/25
+    // ReqW : ReqR = 1:23
+    // ReqW = one every 24
+    for (var i = 0; i < 1000; i ++) {
+      if (i % 24 != 0) {
+        for (var j = 0; j < 3; j ++)
+          reqs.push(promiseGetAll(3 * i + j));
+      } else {
+        reqs.push(promiseGetAll(3 * i + 0));
+        reqs.push(promisePostGetPutDelete(3 * i + 1));
+        reqs.push(promiseGetAll(3 * i + 2));
+      }  
+    }
+    
+    Promise.all(reqs).then(() => {
+      console.log('promise all done with len: ' + responses.length)
+      setResults(responses);
+    });
+    
 
     setLoading(false);
   }
