@@ -20,11 +20,48 @@ const REG_READ_PER_REQ_W = 3;
 const REG_WRITE_PER_REQ_W = 3;
 const REG_READ_PER_REQ_R = 3;
 
+class Report {
+  constructor(isOK, name, jsStartTime, jsEndTime, msg, backStartTime, backEndTime, 
+        lockTime, unlockTime, rLockTime, rUnlockTime
+      ) {
+    // only when OK, will other prop be calculated
+    this.isOK = isOK;
+    this.name = name;
+    // performance.now() is measured in milliseconds
+    this.jsStartTime = jsStartTime;
+    this.jsEndTime = jsEndTime;
+    this.msg = msg;
+    this.backStartTime = backStartTime;
+    this.backEndTime = backEndTime;
+    // writeLock also stored in lock
+    this.lockTime = lockTime;
+    this.unlockTime = unlockTime;
+    this.rLockTime = rLockTime;
+    this.rUnlockTime = rUnlockTime;
+  }
+}
+
+class Summary {
+  constructor(responseTime, throughput, backTime, lockTime, unlockTime, rLockTime, rUnlockTime,
+    errorRate, errorInterval) {
+    this.responseTime = responseTime;
+    this.throughput = throughput;
+    this.backTime = backTime;
+    this.lockTime = lockTime;
+    this.unlockTime = unlockTime;
+    this.rLockTime = rLockTime;
+    this.rUnlockTime = rUnlockTime;
+    this.errorRate = errorRate;
+    this.errorInterval = errorInterval;
+  }
+}
+
 export default function App() {
   let responses = [];
 
+  const [summary, setSummary] = useState(new Summary());
   const [results, setResults] = useState([]);
-  const [isCardMode, setIsCardMode] = useState(true);
+  const [isSummaryMode, setIsSummaryMode] = useState(true);
   // req senders use the same loading switch
   const [loading, setLoading] = React.useState(false);
 
@@ -34,9 +71,11 @@ export default function App() {
       `/api/items`,
       { }
     ).then( (response) => {
-      responses.push(['get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), response.data]);
+      responses.push(
+        new Report(true, 'get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), response.data));
       // setResults(responses);
-    }).catch((err) => responses.push(['ERROR: get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), err]));
+    }).catch((err) => responses.push(
+      new Report(false, 'ERROR: get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), err)));
   }
 
   async function promisePostGetPutDelete(ind) {
@@ -45,7 +84,7 @@ export default function App() {
       `/api/items`,
       {name: "phone test " + ind, count: 2}
     ).then( (response) => {
-      responses.push(['post ' + ind, startpost0.toFixed(3), performance.now().toFixed(3), response.data]);
+      responses.push(new Report(true, 'post ' + ind, startpost0.toFixed(3), performance.now().toFixed(3), response.data));
       // setResults(responses);
 
       let startget0 = performance.now();
@@ -53,9 +92,9 @@ export default function App() {
         `/api/items/` + response.data.id,
         { }
       ).then( (getresp) => {
-        responses.push(['get ' + ind, startget0.toFixed(3), performance.now().toFixed(3), getresp.data]);
+        responses.push(new Report(true, 'get ' + ind, startget0.toFixed(3), performance.now().toFixed(3), getresp.data));
         // setResults(responses);
-      }).catch((err) => responses.push(['ERROR: get ' + ind, startget0, performance.now(), err]));
+      }).catch((err) => responses.push(new Report(false, 'ERROR: get ' + ind, startget0, performance.now(), err)));
 
 
       let startput0 = performance.now();
@@ -63,18 +102,39 @@ export default function App() {
         `/api/items/` + response.data.id,
         {name: "phone test " + ind, count: 1}
       ).then((putresp) => {
-        responses.push(['put ' + ind, startput0.toFixed(3), performance.now().toFixed(3), putresp.data]);
+        responses.push(new Report(true, 'put ' + ind, startput0.toFixed(3), performance.now().toFixed(3), putresp.data));
 
         let startdelete0 = performance.now();
         API.delete(
           `/api/items/` + response.data.id,
           {}
         ).then((deleteresp) => {
-          responses.push(['delete ' + ind, startdelete0.toFixed(3), performance.now().toFixed(3), deleteresp.data])
+          responses.push(new Report(true, 'delete ' + ind, startdelete0.toFixed(3), performance.now().toFixed(3), deleteresp.data))
           setResults(responses);
-        }).catch((err) => responses.push(['ERROR: delete ' + ind, startdelete0, performance.now(), err]));
-      }).catch((err) => responses.push(['ERROR: put ' + ind, startput0, performance.now(), err]));
-    }).catch((err) => responses.push(['ERROR: post ' + ind, startpost0, performance.now(), err]));
+        }).catch((err) => responses.push(new Report(false, 'ERROR: delete ' + ind, startdelete0, performance.now(), err)));
+      }).catch((err) => responses.push(new Report(false, 'ERROR: put ' + ind, startput0, performance.now(), err)));
+    }).catch((err) => responses.push(new Report(false, 'ERROR: post ' + ind, startpost0, performance.now(), err)));
+  }
+
+  function summaryCalculation(responses) {
+    let responseTime = 0;
+    let errorCount = 0;
+    for (let r of responses) {
+      if (r.isOK) {
+        responseTime += r.jsEndTime - r.jsStartTime;
+      }
+    }
+    setSummary(new Summary(
+      responseTime / (responses.length - errorCount),
+      responses.length / (responses[responses.length - 1].jsEndTime - responses[0].jsStartTime) * 1000,
+      null,
+      null,
+      null,
+      null,
+      null,
+      errorCount / responses.length,
+      undefined
+    ))
   }
 
   function sendRegularReq() {
@@ -100,6 +160,7 @@ export default function App() {
     Promise.all(reqs).then(() => {
       console.log('promise all done with len: ' + responses.length)
       setResults(responses);
+      summaryCalculation(responses);
     });
     
 
@@ -121,9 +182,11 @@ export default function App() {
       `/api/items/` + id,
       { }
     ).then( (response) => {
-      responses.push(['put ' + id + ' no. ' + reqind, startput0.toFixed(3), performance.now().toFixed(3), response.data]);
+      responses.push(
+        new Report(true, 'put ' + id + ' no. ' + reqind, startput0.toFixed(3), performance.now().toFixed(3), response.data));
       // setResults(responses);
-    }).catch((err) => responses.push(['ERROR: put ' + id + ' no. ' + reqind, startput0.toFixed(3), performance.now().toFixed(3), err]));
+    }).catch((err) => responses.push(
+      new Report(false, 'ERROR: put ' + id + ' no. ' + reqind, startput0.toFixed(3), performance.now().toFixed(3), err)));
   }
 
   function sendFlashReq() {
@@ -136,6 +199,7 @@ export default function App() {
     Promise.all(reqs).then(() => {
       console.log('promise all done with len: ' + responses.length)
       setResults(responses);
+      summaryCalculation(responses);
     });
 
     setLoading(false);
@@ -177,8 +241,8 @@ export default function App() {
         <Stack direction="row" spacing={2}> 
 
           <FormControlLabel control={<Switch
-                checked={isCardMode}
-                onChange={() => setIsCardMode(!isCardMode)}
+                checked={isSummaryMode}
+                onChange={() => setIsSummaryMode(!isSummaryMode)}
                 name="Switch Da Result"
                 color="primary"
               />} label="Switch Result" />
@@ -189,12 +253,15 @@ export default function App() {
 
         </Stack>
 
-        <div style={{width: "100%"}}>{
-          results.map((result, i) => (
+        <div style={{width: "100%", whiteSpace: "pre-line"}}>{
+          isSummaryMode?(<Typography component="p" paragraph> 
+          {JSON.stringify(summary, null, "\t")}
+        </Typography>)
+          :(results.map((result, i) => (
             <Typography key={i} component="p" paragraph> 
-              {JSON.stringify(result)}
+              {JSON.stringify(result, null, "\t")}
             </Typography>
-          ))
+          )))
         }</div>
 
       </Stack>
