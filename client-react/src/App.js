@@ -7,33 +7,26 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container'
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 import API from './utils/API'
 
 export default function App() {
-  const [error, setError] = useState(null);
+  let responses = [];
 
-  if (error) return <pre>{error.toString()}</pre>;
-  else return <SQLRepl/>;
-}
-
-let responses = [];
-
-/**
- * A simple SQL read-eval-print-loop
- * @param 
- */
-function SQLRepl() {
-  const [error, setError] = useState(null);
   const [results, setResults] = useState([]);
   const [isCardMode, setIsCardMode] = useState(true);
+  // req senders use the same loading switch
+  const [loading, setLoading] = React.useState(false);
 
-  function exec(sql) {
-    if (sql == '') return;
+  function sendRegularReq() {
+    setLoading(true);
+    // await new Promise(r => setTimeout(r, 2000));
     responses = [];
 
     let startgetall0 = performance.now();
@@ -89,9 +82,13 @@ function SQLRepl() {
       responses.push(['get all 1', startgetall1.toFixed(3), performance.now().toFixed(3), response.data]);
       // setResults(responses);
     }).catch((err) => responses.push(['ERROR: get all 1', startgetall1.toFixed(3), performance.now().toFixed(3), err]));
+
+    setLoading(false);
   }
 
-  
+  function sendFlashReq() {
+    setLoading(true);
+  }
 
   const handleClickRefresh = () => {
     setResults(responses);
@@ -99,37 +96,59 @@ function SQLRepl() {
 
   return (
     <Container className="App">
-      <textarea
-        id="queryTextarea"
-        onChange={(e) => exec(e.target.value)}
-        placeholder="Enter any character to activate a serial of tests"
-      />
 
-      <Stack direction="row" spacing={2}> 
+      <Typography variant="h1" component="div" gutterBottom> 
+        Test Client
+      </Typography>
 
-        <FormControlLabel control={<Switch
-              checked={isCardMode}
-              onChange={() => setIsCardMode(!isCardMode)}
-              name="Card Mode"
-              color="primary"
-            />} label="Card Mode" />
+      <Stack direction="column" spacing={2} alignItems="flex-start"> 
 
-        <Tooltip title="to handle uncertainty of React setState()">
-          <Button onClick={handleClickRefresh}>Refresh Result</Button>
-        </Tooltip>
+        <LoadingButton 
+          variant="outlined"
+          onClick={() => sendRegularReq()}
+          endIcon={<SendIcon />}
+          loading={loading}
+          loadingPosition="end"
+        >
+          Regular Sale
+        </LoadingButton>
+
+        <LoadingButton 
+          variant="outlined"
+          onClick={() => sendFlashReq()}
+          endIcon={<SendIcon />}
+          loading={loading}
+          loadingPosition="end"
+        >
+          Flash Deal
+        </LoadingButton>
+
+        <Stack direction="row" spacing={2}> 
+
+          <FormControlLabel control={<Switch
+                checked={isCardMode}
+                onChange={() => setIsCardMode(!isCardMode)}
+                name="Switch Da Result"
+                color="primary"
+              />} label="Switch Result" />
+
+          <Tooltip title="to handle uncertainty of React setState()">
+            <Button onClick={handleClickRefresh}>Refresh Result</Button>
+          </Tooltip>
+
+        </Stack>
+
+        <div style={{width: "100%"}}>{
+          results.map((result, i) => (
+            <Typography key={i} component="p" paragraph> 
+              {JSON.stringify(result)}
+            </Typography>
+          ))
+        }</div>
 
       </Stack>
-
-      <pre className="error">{(error || "").toString()}</pre>
-
-      <div style={{width: "100%"}}>{
-        results.map((result, i) => (
-          <Typography key={i} component="p" paragraph> 
-            {JSON.stringify(result)}
-          </Typography>
-        ))
-      }</div>
 
     </Container>
   );
 }
+
