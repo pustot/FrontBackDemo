@@ -106,8 +106,39 @@ export default function App() {
     setLoading(false);
   }
 
+  async function promiseFlashBuy(id, reqind) {
+    // let startget0 = performance.now();
+    // await API.get(
+    //   `/api/items/` + id,
+    //   { }
+    // ).then( (response) => {
+    //   responses.push(['get ' + id + ' no. ' + reqind, startget0.toFixed(3), performance.now().toFixed(3), response.data]);
+    //   // setResults(responses);
+    // }).catch((err) => responses.push(['ERROR: get ' + id + ' no. ' + reqind, startget0.toFixed(3), performance.now().toFixed(3), err]));
+
+    let startput0 = performance.now();
+    await API.put(
+      `/api/items/` + id,
+      { }
+    ).then( (response) => {
+      responses.push(['put ' + id + ' no. ' + reqind, startput0.toFixed(3), performance.now().toFixed(3), response.data]);
+      // setResults(responses);
+    }).catch((err) => responses.push(['ERROR: put ' + id + ' no. ' + reqind, startput0.toFixed(3), performance.now().toFixed(3), err]));
+  }
+
   function sendFlashReq() {
     setLoading(true);
+
+    var reqs = [];
+    for (var i = 0; i < 10000; i ++) {
+      reqs.push(promiseFlashBuy(i%5, i));
+    }
+    Promise.all(reqs).then(() => {
+      console.log('promise all done with len: ' + responses.length)
+      setResults(responses);
+    });
+
+    setLoading(false);
   }
 
   const handleClickRefresh = () => {

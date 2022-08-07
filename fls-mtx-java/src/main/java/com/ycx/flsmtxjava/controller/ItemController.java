@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 @RequestMapping("/api")
 public class ItemController {
     final int NUM_OF_ITEMS = 5;
-    final int MAX_OF_EACH_ITEM = 2;
+    final int MAX_OF_EACH_ITEM = 20;
 
     private class Reducer{
         private ReentrantLock lock;
