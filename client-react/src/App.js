@@ -71,8 +71,10 @@ export default function App() {
       `/api/items`,
       { }
     ).then( (response) => {
+      let {itemList, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = response.data;
       responses.push(
-        new Report(true, 'get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), response.data));
+        new Report(true, 'get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), itemList,
+        backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
       // setResults(responses);
     }).catch((err) => responses.push(
       new Report(false, 'ERROR: get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), err)));
@@ -84,56 +86,87 @@ export default function App() {
       `/api/items`,
       {name: "phone test " + ind, count: 2}
     ).then( (response) => {
-      responses.push(new Report(true, 'post ' + ind, startpost0.toFixed(3), performance.now().toFixed(3), response.data));
+      let {item, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = response.data;
+      responses.push(new Report(true, 'post ' + ind, startpost0.toFixed(3), performance.now().toFixed(3), item,
+      backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
       // setResults(responses);
 
       let startget0 = performance.now();
       API.get(
-        `/api/items/` + response.data.id,
+        `/api/items/` + response.data.item.id,
         { }
       ).then( (getresp) => {
-        responses.push(new Report(true, 'get ' + ind, startget0.toFixed(3), performance.now().toFixed(3), getresp.data));
+        let {item, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = getresp.data;
+        responses.push(new Report(true, 'get ' + ind, startget0.toFixed(3), performance.now().toFixed(3), item,
+        backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
         // setResults(responses);
+        let startput0 = performance.now();
+        API.put(
+          `/api/items/` + response.data.item.id,
+          {name: "phone test " + ind, count: 1}
+        ).then((putresp) => {
+          let {item, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = putresp.data;
+          responses.push(new Report(true, 'put ' + ind, startput0.toFixed(3), performance.now().toFixed(3), item,
+          backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
+
+          let startdelete0 = performance.now();
+          API.delete(
+            `/api/items/` + response.data.item.id,
+            {}
+          ).then((deleteresp) => {
+            let {item, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = deleteresp.data;
+            responses.push(new Report(true, 'delete ' + ind, startdelete0.toFixed(3), performance.now().toFixed(3), item,
+            backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime))
+            setResults(responses);
+          }).catch((err) => responses.push(new Report(false, 'ERROR: delete ' + ind, startdelete0, performance.now(), err)));
+        }).catch((err) => responses.push(new Report(false, 'ERROR: put ' + ind, startput0, performance.now(), err)));
       }).catch((err) => responses.push(new Report(false, 'ERROR: get ' + ind, startget0, performance.now(), err)));
-
-
-      let startput0 = performance.now();
-      API.put(
-        `/api/items/` + response.data.id,
-        {name: "phone test " + ind, count: 1}
-      ).then((putresp) => {
-        responses.push(new Report(true, 'put ' + ind, startput0.toFixed(3), performance.now().toFixed(3), putresp.data));
-
-        let startdelete0 = performance.now();
-        API.delete(
-          `/api/items/` + response.data.id,
-          {}
-        ).then((deleteresp) => {
-          responses.push(new Report(true, 'delete ' + ind, startdelete0.toFixed(3), performance.now().toFixed(3), deleteresp.data))
-          setResults(responses);
-        }).catch((err) => responses.push(new Report(false, 'ERROR: delete ' + ind, startdelete0, performance.now(), err)));
-      }).catch((err) => responses.push(new Report(false, 'ERROR: put ' + ind, startput0, performance.now(), err)));
     }).catch((err) => responses.push(new Report(false, 'ERROR: post ' + ind, startpost0, performance.now(), err)));
   }
 
   function summaryCalculation(responses) {
     let responseTime = 0;
     let errorCount = 0;
+    let prevErrorEnd = 0;
+    let errorInterval = 0;
+    let backTime = 0;
+    let lockTime = 0;
+    let lockCnt = 0;
+    let unlockTime = 0;
+    let rLockTime = 0;
+    let rLockCnt = 0;
+    let rUnlockTime = 0;
     for (let r of responses) {
       if (r.isOK) {
         responseTime += r.jsEndTime - r.jsStartTime;
+        backTime += r.backEndTime - r.backStartTime;
+        if (r.lockTime) {
+          lockTime += r.lockTime;
+          unlockTime += r.unlockTime;
+          lockCnt ++;
+        }
+        if (r.rLockTime) {
+          rLockTime += r.rLockTime;
+          rUnlockTime += r.rUnlockTime;
+          rLockCnt ++;
+        }
+      } else {
+        errorCount ++;
+        if (errorCount >= 2)
+          errorInterval += r.jsEndTime - prevErrorEnd;
+        prevErrorEnd = r.jsEndTime;
       }
     }
     setSummary(new Summary(
       responseTime / (responses.length - errorCount),
       responses.length / (responses[responses.length - 1].jsEndTime - responses[0].jsStartTime) * 1000,
-      null,
-      null,
-      null,
-      null,
-      null,
+      backTime / (responses.length - errorCount),
+      lockTime / lockCnt,
+      unlockTime / lockCnt,
+      rLockTime / rLockCnt,
+      rUnlockTime / rLockCnt,
       errorCount / responses.length,
-      undefined
+      errorInterval / (errorCount - 1)
     ))
   }
 
@@ -146,7 +179,7 @@ export default function App() {
     // W = 1/25
     // ReqW : ReqR = 1:23
     // ReqW = one every 24
-    for (var i = 0; i < 1000; i ++) {
+    for (var i = 0; i < Math.floor(10000 / 3); i ++) {
       if (i % 24 != 0) {
         for (var j = 0; j < 3; j ++)
           reqs.push(promiseGetAll(3 * i + j));
@@ -156,6 +189,8 @@ export default function App() {
         reqs.push(promiseGetAll(3 * i + 2));
       }  
     }
+
+    // reqs = [promiseGetAll(0), promisePostGetPutDelete(0)];
     
     Promise.all(reqs).then(() => {
       console.log('promise all done with len: ' + responses.length)

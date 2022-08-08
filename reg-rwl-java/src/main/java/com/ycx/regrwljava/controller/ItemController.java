@@ -24,14 +24,7 @@ import java.util.stream.Stream;
 public class ItemController {
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     private static class Item implements Serializable {
-        private String id;
-        private String name;
-        private int count;
-
         Item(String id, String name, int count) {
-            this.id = id;
-            this.name = name;
-            this.count = count;
         }
     }
 
