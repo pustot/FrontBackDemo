@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"time"
 )
 
 var NUM_OF_ITEMS int = 5
@@ -14,6 +15,16 @@ var MAX_OF_EACH_ITEM int = 20
 type reducer struct {
 	mtx   sync.Mutex
 	count int
+}
+
+type Report struct {
+	Msg           string `json:"msg"`
+	BackStartTime int64  `json:"backStartTime"`
+	BackEndTime   int64  `json:"backEndTime"`
+	LockTime      int64  `json:"lockTime"`
+	UnlockTime    int64  `json:"unlockTime"`
+	RLockTime     int64  `json:"rLockTime"`
+	RUnlockTime   int64  `json:"rUnlockTime"`
 }
 
 var items []reducer
@@ -45,6 +56,7 @@ func main() {
 // getItemByID locates the album whose ID value matches the id
 // parameter sent by the client, then returns that album as a response.
 func getItemByID(c *gin.Context) {
+	backStartTime := time.Now().UnixNano()
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -58,16 +70,25 @@ func getItemByID(c *gin.Context) {
 
 	// Loop over the list of albums, looking for
 	// an album whose ID value matches the parameter.
+	lockStartTime := time.Now().UnixNano()
 	items[id].mtx.Lock()
+	lockEndTime := time.Now().UnixNano()
 	//sleep("getItemByID R")
 	val := items[id].count
+	unlockStartTime := time.Now().UnixNano()
 	items[id].mtx.Unlock()
+	unlockEndTime := time.Now().UnixNano()
 	//sleep("getItemByID R Unlocked")
-	c.JSON(http.StatusOK, val)
+	c.JSON(http.StatusOK, Report{
+		Msg: string(rune(val)), BackStartTime: backStartTime, BackEndTime: time.Now().UnixNano(),
+		LockTime: lockEndTime - lockStartTime, UnlockTime: unlockEndTime - unlockStartTime,
+	})
 	return
 }
 
 func flashBuy(c *gin.Context) {
+	backStartTime := time.Now().UnixNano()
+	var msg string
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -79,17 +100,31 @@ func flashBuy(c *gin.Context) {
 		return
 	}
 
+	lockStartTime := time.Now().UnixNano()
 	items[id].mtx.Lock()
-	defer items[id].mtx.Unlock()
+	lockEndTime := time.Now().UnixNano()
+
+	time.Sleep(1 * time.Nanosecond)
+
 	switch remaining := items[id].count; {
 	case remaining > 0:
 		items[id].count--
-		c.JSON(http.StatusOK, "Flash Buy Successful!")
+		msg = "Flash Buy Successful!"
 	case remaining == 0:
-		c.JSON(http.StatusOK, "Flash Buy Failed.")
+		msg = "Flash Buy Failed."
 	default:
 		c.JSON(http.StatusInternalServerError, "Item Less Than Zero")
+		return
 	}
+	unlockStartTime := time.Now().UnixNano()
+	items[id].mtx.Unlock()
+	unlockEndTime := time.Now().UnixNano()
+
+	c.JSON(http.StatusOK, Report{
+		Msg: msg, BackStartTime: backStartTime, BackEndTime: time.Now().UnixNano(),
+		LockTime: lockEndTime - lockStartTime, UnlockTime: unlockEndTime - unlockStartTime,
+	})
+	return
 }
 
 func CORSMiddleware() gin.HandlerFunc {
