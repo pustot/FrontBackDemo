@@ -230,7 +230,7 @@ export default function App() {
     setLoading(true);
 
     var reqs = [];
-    for (var i = 0; i < 10000; i ++) {
+    for (var i = 0; i < 6000; i ++) {
       reqs.push(promiseFlashBuy(i%5, i));
     }
     Promise.all(reqs).then(() => {

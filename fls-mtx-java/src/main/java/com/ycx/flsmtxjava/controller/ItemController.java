@@ -1,10 +1,12 @@
 package com.ycx.flsmtxjava.controller;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -23,6 +25,27 @@ public class ItemController {
         Reducer(int count) {
             this.count = count;
             lock = new ReentrantLock();
+        }
+    }
+
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    private static class Report implements Serializable {
+        String msg;
+        long backStartTime;
+        long backEndTime;
+        long lockTime;
+        long unlockTime;
+        long rLockTime;
+        long rUnlockTime;
+        Report(String msg, long backStartTime, long backEndTime,
+                       long lockTime, long unlockTime, long rLockTime, long rUnlockTime) {
+            this.msg = msg;
+            this.backStartTime = backStartTime;
+            this.backEndTime = backEndTime;
+            this.lockTime = lockTime;
+            this.unlockTime = unlockTime;
+            this.rLockTime = rLockTime;
+            this.rUnlockTime = rUnlockTime;
         }
     }
 
@@ -45,24 +68,41 @@ public class ItemController {
     }
 
     @PutMapping("/items/{id}")
-    public String flashBuy(@Valid @PathVariable(value = "id") int id) {
+    public Report flashBuy(@Valid @PathVariable(value = "id") int id) {
+        long backStartTime = System.nanoTime();
         if (id < 0 || id > 5) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "id exceeds limit");
         }
 
+        String msg;
+        long unlockStartTime, unlockEndTime;
+        long lockStartTime = System.nanoTime();
         items.get(id).lock.lock();
+        long lockEndTime = System.nanoTime();
+        try {
+            Thread.sleep(1); // simulate large list
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         try {
             int cnt = items.get(id).count;
             if (cnt > 0) {
                 items.get(id).count --;
-                return "Flash Buy Successful!";
+                msg = "Flash Buy Successful!";
             } else if (cnt == 0) {
-                return "Flash Buy Failed.";
+                msg = "Flash Buy Failed.";
             } else {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Item Less Than Zero");
             }
         } finally {
+            unlockStartTime = System.nanoTime();
             items.get(id).lock.unlock();
+            unlockEndTime = System.nanoTime();
         }
+
+        return new Report(msg, backStartTime, System.nanoTime(),
+                lockEndTime - lockStartTime, unlockEndTime - unlockStartTime,
+                0, 0);
     }
 }
