@@ -104,7 +104,7 @@ func flashBuy(c *gin.Context) {
 	items[id].mtx.Lock()
 	lockEndTime := time.Now().UnixNano()
 
-	time.Sleep(1 * time.Nanosecond)
+	time.Sleep(1 * time.Millisecond)
 
 	switch remaining := items[id].count; {
 	case remaining > 0:

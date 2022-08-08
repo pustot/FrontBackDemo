@@ -87,7 +87,7 @@ func getItems(c *gin.Context) {
 	for _, val := range items {
 		res = append(res, val)
 	}
-	time.Sleep(1 * time.Nanosecond) // simulate large list
+	time.Sleep(1 * time.Millisecond) // simulate large list
 	rUnlockStartTime := time.Now().UnixNano()
 	m.RUnlock()
 	rUnlockEndTime := time.Now().UnixNano()

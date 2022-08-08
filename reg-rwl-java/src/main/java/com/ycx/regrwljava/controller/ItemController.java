@@ -24,7 +24,13 @@ import java.util.stream.Stream;
 public class ItemController {
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     private static class Item implements Serializable {
+        String id;
+        String name;
+        int count;
         Item(String id, String name, int count) {
+            this.id = id;
+            this.name = name;
+            this.count = count;
         }
     }
 
@@ -36,6 +42,48 @@ public class ItemController {
         ItemWoID(String name, int count) {
             this.name = name;
             this.count = count;
+        }
+    }
+
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    private static class ReportWithItem implements Serializable {
+        Item item;
+        long backStartTime;
+        long backEndTime;
+        long lockTime;
+        long unlockTime;
+        long rLockTime;
+        long rUnlockTime;
+        ReportWithItem(Item item, long backStartTime, long backEndTime,
+                       long lockTime, long unlockTime, long rLockTime, long rUnlockTime) {
+            this.item = item;
+            this.backStartTime = backStartTime;
+            this.backEndTime = backEndTime;
+            this.lockTime = lockTime;
+            this.unlockTime = unlockTime;
+            this.rLockTime = rLockTime;
+            this.rUnlockTime = rUnlockTime;
+        }
+    }
+
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    private static class ReportWithItemList implements Serializable {
+        List<Item> itemList;
+        long backStartTime;
+        long backEndTime;
+        long lockTime;
+        long unlockTime;
+        long rLockTime;
+        long rUnlockTime;
+        ReportWithItemList(List<Item> itemList, long backStartTime , long backEndTime,
+                           long lockTime, long unlockTime, long rLockTime, long rUnlockTime) {
+            this.itemList = itemList;
+            this.backStartTime = backStartTime;
+            this.backEndTime = backEndTime;
+            this.lockTime = lockTime;
+            this.unlockTime = unlockTime;
+            this.rLockTime = rLockTime;
+            this.rUnlockTime = rUnlockTime;
         }
     }
 
@@ -53,29 +101,47 @@ public class ItemController {
 
     // Get All Items
     @GetMapping("/items")
-    public List<Item> getItems() {
+    public ReportWithItemList getItems() {
+        long backStartTime = System.nanoTime();
+
         List<Item> res;
 
+        long rUnlockStartTime, rUnlockEndTime;
+
+        long rLockStartTime = System.nanoTime();
         readLock.lock();
+        long rLockEndTime = System.nanoTime();
         try {
             res = new ArrayList<>(items.values());
+            Thread.sleep(1); // simulate large list
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         } finally {
+            rUnlockStartTime = System.nanoTime();
             readLock.unlock();
+            rUnlockEndTime = System.nanoTime();
         }
 
-        return res;
+        return new ReportWithItemList(res, backStartTime, System.nanoTime(), 0, 0,
+                rLockEndTime - rLockStartTime, rUnlockEndTime - rUnlockStartTime);
     }
 
     // Get a Single Item
     @GetMapping("/items/{id}")
-    public Item getItemById(@Valid @PathVariable(value = "id") UUID itemId) {
+    public ReportWithItem getItemById(@Valid @PathVariable(value = "id") UUID itemId) {
+        long backStartTime = System.nanoTime();
         Item res;
 
+        long rUnlockStartTime, rUnlockEndTime;
+        long rLockStartTime = System.nanoTime();
         readLock.lock();
+        long rLockEndTime = System.nanoTime();
         try {
             res = items.getOrDefault(itemId, null);
         } finally {
+            rUnlockStartTime = System.nanoTime();
             readLock.unlock();
+            rUnlockEndTime = System.nanoTime();
         }
 
         if (res == null) {
@@ -83,74 +149,109 @@ public class ItemController {
                     HttpStatus.NOT_FOUND, "entity not found"
             );
         }
-        return res;
+        return new ReportWithItem(res, backStartTime, System.nanoTime(), 0, 0,
+                rLockEndTime - rLockStartTime, rUnlockEndTime - rUnlockStartTime);
     }
 
     // Create a new Item
     @PostMapping("/items")
-    public Item postItems(@Valid @RequestBody ItemWoID item) {
+    public ReportWithItem postItems(@Valid @RequestBody ItemWoID item) {
+        long backStartTime = System.nanoTime();
         UUID newId = UUID.randomUUID();
         Item newItem = new Item(newId.toString(), item.name, item.count);
 
+        long unlockStartTime, unlockEndTime;
+        long lockStartTime = System.nanoTime();
         writeLock.lock();
+        long lockEndTime = System.nanoTime();
         try {
             items.put(newId, newItem);
         } finally {
+            unlockStartTime = System.nanoTime();
             writeLock.unlock();
+            unlockEndTime = System.nanoTime();
         }
 
-        return newItem;
+        return new ReportWithItem(newItem, backStartTime, System.nanoTime(),
+                lockEndTime - lockStartTime, unlockEndTime - unlockStartTime,
+                0, 0);
     }
 
     // Update a Item
     @PutMapping("/items/{id}")
-    public Item putItemByID(@Valid @PathVariable(value = "id") UUID itemId,
+    public ReportWithItem putItemByID(@Valid @PathVariable(value = "id") UUID itemId,
                            @Valid @RequestBody ItemWoID itemDetails) {
+        long backStartTime = System.nanoTime();
 
+        long rUnlockStartTime, rUnlockEndTime;
+        long rLockStartTime = System.nanoTime();
         readLock.lock();
+        long rLockEndTime = System.nanoTime();
         try {
             if (!items.containsKey(itemId))
                 throw new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "entity not found"
                 );
         } finally {
+            rUnlockStartTime = System.nanoTime();
             readLock.unlock();
+            rUnlockEndTime = System.nanoTime();
         }
 
         Item newItem = new Item(itemId.toString(), itemDetails.name, itemDetails.count);
 
+        long unlockStartTime, unlockEndTime;
+        long lockStartTime = System.nanoTime();
         writeLock.lock();
+        long lockEndTime = System.nanoTime();
         try {
             items.put(itemId, newItem);
         } finally {
+            unlockStartTime = System.nanoTime();
             writeLock.unlock();
+            unlockEndTime = System.nanoTime();
         }
 
-        return newItem;
+        return new ReportWithItem(newItem, backStartTime, System.nanoTime(),
+                lockEndTime - lockStartTime, unlockEndTime - unlockStartTime,
+                rLockEndTime - rLockStartTime, rUnlockEndTime - rUnlockStartTime);
     }
 
     // Delete a Item
     @DeleteMapping("/items/{id}")
-    public Item deleteItem(@Valid @PathVariable(value = "id") UUID itemId) {
+    public ReportWithItem deleteItem(@Valid @PathVariable(value = "id") UUID itemId) {
+        long backStartTime = System.nanoTime();
         Item res;
 
+        long rUnlockStartTime, rUnlockEndTime;
+        long rLockStartTime = System.nanoTime();
         readLock.lock();
+        long rLockEndTime = System.nanoTime();
         try {
             if (!items.containsKey(itemId))
                 throw new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "entity not found"
                 );
         } finally {
+            rUnlockStartTime = System.nanoTime();
             readLock.unlock();
+            rUnlockEndTime = System.nanoTime();
         }
 
+        long unlockStartTime, unlockEndTime;
+        long lockStartTime = System.nanoTime();
         writeLock.lock();
+        long lockEndTime = System.nanoTime();
         try {
             res = items.remove(itemId);
         } finally {
+            unlockStartTime = System.nanoTime();
             writeLock.unlock();
+            unlockEndTime = System.nanoTime();
         }
 
-        return res;
+        return new ReportWithItem(res, backStartTime, System.nanoTime(),
+                lockEndTime - lockStartTime, unlockEndTime - unlockStartTime,
+                rLockEndTime - rLockStartTime, rUnlockEndTime - rUnlockStartTime);
     }
 }
