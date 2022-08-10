@@ -160,11 +160,11 @@ export default function App() {
     setSummary(new Summary(
       responseTime / (responses.length - errorCount),
       responses.length / (responses[responses.length - 1].jsEndTime - responses[0].jsStartTime) * 1000,
-      backTime / (responses.length - errorCount) / 1000,
-      lockTime / lockCnt / 1000,
-      unlockTime / lockCnt / 1000,
-      rLockTime / rLockCnt / 1000,
-      rUnlockTime / rLockCnt / 1000,
+      backTime / (responses.length - errorCount) / 1000000,
+      lockTime / lockCnt / 1000000,
+      unlockTime / lockCnt / 1000000,
+      rLockTime / rLockCnt / 1000000,
+      rUnlockTime / rLockCnt / 1000000,
       errorCount / responses.length,
       errorInterval / (errorCount - 1) / 1000
     ))
@@ -179,7 +179,7 @@ export default function App() {
     // W = 1/25
     // ReqW : ReqR = 1:23
     // ReqW = one every 24
-    for (var i = 0; i < Math.floor(3000 / 3); i ++) {
+    for (var i = 0; i < Math.floor(1500 / 3); i ++) {
       if (i % 24 != 0) {
         for (var j = 0; j < 3; j ++)
           reqs.push(promiseGetAll(3 * i + j));
@@ -230,7 +230,7 @@ export default function App() {
     setLoading(true);
 
     var reqs = [];
-    for (var i = 0; i < 6000; i ++) {
+    for (var i = 0; i < 1500; i ++) {
       reqs.push(promiseFlashBuy(i%5, i));
     }
     Promise.all(reqs).then(() => {
