@@ -179,7 +179,7 @@ export default function App() {
     // W = 1/25
     // ReqW : ReqR = 1:23
     // ReqW = one every 24
-    for (var i = 0; i < Math.floor(1500 / 3); i ++) {
+    for (var i = 0; i < Math.floor(500 / 3); i ++) {
       if (i % 24 != 0) {
         for (var j = 0; j < 3; j ++)
           reqs.push(promiseGetAll(3 * i + j));
