@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./styles.css";
-import initSqlJs from "sql.js";
-import ResultsTable from "./components/ResultsTable"
-import {HashRouter as Router} from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container'
-import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
@@ -61,67 +57,24 @@ export default function App() {
   const [summary, setSummary] = useState(new Summary());
   const [results, setResults] = useState([]);
   const [isSummaryMode, setIsSummaryMode] = useState(true);
-  // req senders use the same loading switch
   const [loading, setLoading] =useState(false);
   const [lastTime, setLastTime] = useState(new Date());
 
-  async function promiseGetAll(ind) {
-    let startgetall0 = performance.now();
-    await API.get(
-      `/api/items`,
-      { }
-    ).then( (response) => {
-      let {itemList, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = response.data;
-      responses.push(
-        new Report(true, 'get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), itemList,
-        backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
-      // setResults(responses);
-    }).catch((err) => responses.push(
-      new Report(false, 'ERROR: get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), err)));
-  }
-
-  async function promisePostGetPutDelete(ind) {
-    let startpost0 = performance.now();
-    await API.post(
-      `/api/items`,
-      {name: "phone test " + ind, count: 2}
-    ).then( (response) => {
-      let {item, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = response.data;
-      responses.push(new Report(true, 'post ' + ind, startpost0.toFixed(3), performance.now().toFixed(3), item,
-      backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
-      // setResults(responses);
-
-      let startget0 = performance.now();
-      API.get(
-        `/api/items/` + response.data.item.id,
-        { }
-      ).then( (getresp) => {
-        let {item, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = getresp.data;
-        responses.push(new Report(true, 'get ' + ind, startget0.toFixed(3), performance.now().toFixed(3), item,
-        backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
-        // setResults(responses);
-        let startput0 = performance.now();
-        API.put(
-          `/api/items/` + response.data.item.id,
-          {name: "phone test " + ind, count: 1}
-        ).then((putresp) => {
-          let {item, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = putresp.data;
-          responses.push(new Report(true, 'put ' + ind, startput0.toFixed(3), performance.now().toFixed(3), item,
-          backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
-
-          let startdelete0 = performance.now();
-          API.delete(
-            `/api/items/` + response.data.item.id,
-            {}
-          ).then((deleteresp) => {
-            let {item, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = deleteresp.data;
-            responses.push(new Report(true, 'delete ' + ind, startdelete0.toFixed(3), performance.now().toFixed(3), item,
-            backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime))
-            setResults(responses);
-          }).catch((err) => responses.push(new Report(false, 'ERROR: delete ' + ind, startdelete0, performance.now(), err)));
-        }).catch((err) => responses.push(new Report(false, 'ERROR: put ' + ind, startput0, performance.now(), err)));
-      }).catch((err) => responses.push(new Report(false, 'ERROR: get ' + ind, startget0, performance.now(), err)));
-    }).catch((err) => responses.push(new Report(false, 'ERROR: post ' + ind, startpost0, performance.now(), err)));
+  async function send(type) {
+    responses = [];
+    setLoading(true);
+    for (let i = 0; i < TOTAL_MINUTES; i ++) {
+      let isLog = (i%10 == 0 || i >= TOTAL_MINUTES - 3) ? true : false;
+      if (type == 'fls') {
+        await new Promise(r => setTimeout(r, 1000));  // sleep
+        sendFlashReqABatch(isLog);
+      } else {
+        await new Promise(r => setTimeout(r, 1000));
+        sendRegularReqABatch(i, isLog)
+      }
+    }
+    console.log('gere?')
+    setLoading(false);
   }
 
   function summaryCalculation(responses) {
@@ -180,7 +133,6 @@ export default function App() {
     // 4 every 96
     for (var i = 0; i < REQUEST_PER_SEC; i ++) {
       if ((sec * REQUEST_PER_SEC + i) % 96 != 0) {
-          // reqs.push(promiseGetAll(3 * i + j));
           promiseGetAll(i).then(() => {
             setResults(responses)
             if (isLog && i >= REQUEST_PER_SEC - 5)
@@ -196,41 +148,6 @@ export default function App() {
       }
       await new Promise(r => setTimeout(r, 2));
     }
-
-    // reqs = [promiseGetAll(0), promisePostGetPutDelete(0)];
-    
-    // await Promise.all(reqs).then(() => {
-    //   console.log('promise partly done with len: ' + responses.length)
-    //   setResults(responses);
-    //   setLastTime(new Date());
-    //   if (isLog) summaryCalculation(responses);
-    // });
-
-    // console.log('responses now len?' + responses.length)
-  }
-
-  async function promiseFlashBuy(id, reqind) {
-    // let startget0 = performance.now();
-    // await API.get(
-    //   `/api/items/` + id,
-    //   { }
-    // ).then( (response) => {
-    //   responses.push(['get ' + id + ' no. ' + reqind, startget0.toFixed(3), performance.now().toFixed(3), response.data]);
-    //   // setResults(responses);
-    // }).catch((err) => responses.push(['ERROR: get ' + id + ' no. ' + reqind, startget0.toFixed(3), performance.now().toFixed(3), err]));
-
-    let startput0 = performance.now();
-    await API.put(
-      `/api/items/` + id,
-      { }
-    ).then( (response) => {
-      let {msg, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = response.data;
-      responses.push(
-        new Report(true, 'put ' + id + ' no. ' + reqind, startput0.toFixed(3), performance.now().toFixed(3), msg,
-        backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
-      // setResults(responses);
-    }).catch((err) => responses.push(
-      new Report(false, 'ERROR: put ' + id + ' no. ' + reqind, startput0.toFixed(3), performance.now().toFixed(3), err)));
   }
 
   async function sendFlashReqABatch(isLog) {
@@ -242,7 +159,6 @@ export default function App() {
       console.log('promise partly done with len: ' + responses.length)
       setResults(responses);
       setLastTime(new Date());
-      // summaryCalculation(responses);
       if (isLog) summaryCalculation(responses);
     });
 
@@ -254,21 +170,74 @@ export default function App() {
     summaryCalculation(responses);
   }
 
-  async function send(type) {
-    responses = [];
-    setLoading(true);
-    for (let i = 0; i < TOTAL_MINUTES; i ++) {
-      let isLog = (i%10 == 0 || i >= TOTAL_MINUTES - 3) ? true : false;
-      if (type == 'fls') {
-        await new Promise(r => setTimeout(r, 1000));  // sleep
-        sendFlashReqABatch(isLog);
-      } else {
-        await new Promise(r => setTimeout(r, 1000));
-        sendRegularReqABatch(i, isLog)
-      }
-    }
-    console.log('gere?')
-    setLoading(false);
+  async function promiseGetAll(ind) {
+    let startgetall0 = performance.now();
+    await API.get(
+      `/api/items`,
+      { }
+    ).then( (response) => {
+      let {itemList, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = response.data;
+      responses.push(
+        new Report(true, 'get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), itemList,
+        backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
+    }).catch((err) => responses.push(
+      new Report(false, 'ERROR: get all ' + ind, startgetall0.toFixed(3), performance.now().toFixed(3), err)));
+  }
+
+  async function promisePostGetPutDelete(ind) {
+    let startpost0 = performance.now();
+    await API.post(
+      `/api/items`,
+      {name: "phone test " + ind, count: 2}
+    ).then( (response) => {
+      let {item, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = response.data;
+      responses.push(new Report(true, 'post ' + ind, startpost0.toFixed(3), performance.now().toFixed(3), item,
+      backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
+
+      let startget0 = performance.now();
+      API.get(
+        `/api/items/` + response.data.item.id,
+        { }
+      ).then( (getresp) => {
+        let {item, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = getresp.data;
+        responses.push(new Report(true, 'get ' + ind, startget0.toFixed(3), performance.now().toFixed(3), item,
+        backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
+        let startput0 = performance.now();
+        API.put(
+          `/api/items/` + response.data.item.id,
+          {name: "phone test " + ind, count: 1}
+        ).then((putresp) => {
+          let {item, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = putresp.data;
+          responses.push(new Report(true, 'put ' + ind, startput0.toFixed(3), performance.now().toFixed(3), item,
+          backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
+
+          let startdelete0 = performance.now();
+          API.delete(
+            `/api/items/` + response.data.item.id,
+            {}
+          ).then((deleteresp) => {
+            let {item, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = deleteresp.data;
+            responses.push(new Report(true, 'delete ' + ind, startdelete0.toFixed(3), performance.now().toFixed(3), item,
+            backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime))
+            setResults(responses);
+          }).catch((err) => responses.push(new Report(false, 'ERROR: delete ' + ind, startdelete0, performance.now(), err)));
+        }).catch((err) => responses.push(new Report(false, 'ERROR: put ' + ind, startput0, performance.now(), err)));
+      }).catch((err) => responses.push(new Report(false, 'ERROR: get ' + ind, startget0, performance.now(), err)));
+    }).catch((err) => responses.push(new Report(false, 'ERROR: post ' + ind, startpost0, performance.now(), err)));
+  }
+
+  async function promiseFlashBuy(id, reqind) {
+    let startput0 = performance.now();
+    await API.put(
+      `/api/items/` + id,
+      { }
+    ).then( (response) => {
+      let {msg, backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime} = response.data;
+      responses.push(
+        new Report(true, 'put ' + id + ' no. ' + reqind, startput0.toFixed(3), performance.now().toFixed(3), msg,
+        backStartTime, backEndTime, lockTime, unlockTime, rLockTime, rUnlockTime));
+    }).catch((err) => responses.push(
+      new Report(false, 'ERROR: put ' + id + ' no. ' + reqind, startput0.toFixed(3), performance.now().toFixed(3), err)));
   }
 
   return (
