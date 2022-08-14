@@ -16,9 +16,8 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import API from './utils/API'
 
-const REG_READ_PER_REQ_W = 3;
-const REG_WRITE_PER_REQ_W = 3;
-const REG_READ_PER_REQ_R = 3;
+const TOTAL_MINUTES = 60;
+const REQUEST_PER_SEC = 30;
 
 class Report {
   constructor(isOK, name, jsStartTime, jsEndTime, msg, backStartTime, backEndTime, 
@@ -57,13 +56,14 @@ class Summary {
 }
 
 export default function App() {
-  let responses = [];
+  var responses = [];
 
   const [summary, setSummary] = useState(new Summary());
   const [results, setResults] = useState([]);
   const [isSummaryMode, setIsSummaryMode] = useState(true);
   // req senders use the same loading switch
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] =useState(false);
+  const [lastTime, setLastTime] = useState(new Date());
 
   async function promiseGetAll(ind) {
     let startgetall0 = performance.now();
@@ -170,16 +170,12 @@ export default function App() {
     ))
   }
 
-  function sendRegularReq() {
-    setLoading(true);
-    // await new Promise(r => setTimeout(r, 2000));
-    responses = [];
-
+  async function sendRegularReqABatch(isLog) {
     var reqs = [];
     // W = 1/25
     // ReqW : ReqR = 1:23
     // ReqW = one every 24
-    for (var i = 0; i < Math.floor(500 / 3); i ++) {
+    for (var i = 0; i < Math.floor(REQUEST_PER_SEC / 3); i ++) {
       if (i % 24 != 0) {
         for (var j = 0; j < 3; j ++)
           reqs.push(promiseGetAll(3 * i + j));
@@ -192,14 +188,14 @@ export default function App() {
 
     // reqs = [promiseGetAll(0), promisePostGetPutDelete(0)];
     
-    Promise.all(reqs).then(() => {
-      console.log('promise all done with len: ' + responses.length)
+    await Promise.all(reqs).then(() => {
+      console.log('promise partly done with len: ' + responses.length)
       setResults(responses);
-      summaryCalculation(responses);
+      setLastTime(new Date());
+      if (isLog) summaryCalculation(responses);
     });
-    
 
-    setLoading(false);
+    console.log('responses now len?' + responses.length)
   }
 
   async function promiseFlashBuy(id, reqind) {
@@ -226,24 +222,42 @@ export default function App() {
       new Report(false, 'ERROR: put ' + id + ' no. ' + reqind, startput0.toFixed(3), performance.now().toFixed(3), err)));
   }
 
-  function sendFlashReq() {
-    setLoading(true);
-
+  async function sendFlashReqABatch(isLog) {
     var reqs = [];
-    for (var i = 0; i < 1500; i ++) {
+    for (var i = 0; i < REQUEST_PER_SEC; i ++) {
       reqs.push(promiseFlashBuy(i%5, i));
     }
-    Promise.all(reqs).then(() => {
-      console.log('promise all done with len: ' + responses.length)
+    await Promise.all(reqs).then(() => {
+      console.log('promise partly done with len: ' + responses.length)
       setResults(responses);
-      summaryCalculation(responses);
+      setLastTime(new Date());
+      // summaryCalculation(responses);
+      if (isLog) summaryCalculation(responses);
     });
 
-    setLoading(false);
+    console.log('responses now len?' + responses.length)
   }
 
   const handleClickRefresh = () => {
     setResults(responses);
+    summaryCalculation(responses);
+  }
+
+  async function send(type) {
+    responses = [];
+    setLoading(true);
+    for (let i = 0; i < TOTAL_MINUTES; i ++) {
+      let isLog = (i%10 == 0 || i >= TOTAL_MINUTES - 3) ? true : false;
+      if (type == 'fls') {
+        await new Promise(r => setTimeout(r, 1000));  // sleep
+        sendFlashReqABatch(isLog);
+      } else {
+        await new Promise(r => setTimeout(r, 1000));
+        sendRegularReqABatch(isLog)
+      }
+    }
+    console.log('gere?')
+    setLoading(false);
   }
 
   return (
@@ -257,7 +271,7 @@ export default function App() {
 
         <LoadingButton 
           variant="outlined"
-          onClick={() => sendRegularReq()}
+          onClick={() => send('reg')}
           endIcon={<SendIcon />}
           loading={loading}
           loadingPosition="end"
@@ -267,7 +281,7 @@ export default function App() {
 
         <LoadingButton 
           variant="outlined"
-          onClick={() => sendFlashReq()}
+          onClick={() => send('fls')}
           endIcon={<SendIcon />}
           loading={loading}
           loadingPosition="end"
@@ -289,6 +303,10 @@ export default function App() {
           </Tooltip>
 
         </Stack>
+
+        <Typography component="p" paragraph>
+            {results.length} Responses Received. Last time {lastTime.toLocaleString()}
+        </Typography>
 
         <div style={{width: "100%", whiteSpace: "pre-line"}}>{
           isSummaryMode?(<Typography component="p" paragraph> 

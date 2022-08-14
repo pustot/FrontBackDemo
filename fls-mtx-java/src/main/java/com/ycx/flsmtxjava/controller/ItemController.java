@@ -19,6 +19,8 @@ public class ItemController {
     final int NUM_OF_ITEMS = 5;
     final int MAX_OF_EACH_ITEM = 20;
 
+    final int SLEEP_MS = 100;
+
     private class Reducer{
         private ReentrantLock lock;
         private int count;
@@ -80,7 +82,7 @@ public class ItemController {
         items.get(id).lock.lock();
         long lockEndTime = System.nanoTime();
         try {
-            Thread.sleep(1); // simulate large list
+            Thread.sleep(SLEEP_MS * 1); // simulate large list
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

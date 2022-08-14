@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+const SLEEP_MS time.Duration = 100
+
 type item struct {
 	ID    string `json:"id"`
 	Name  string `json:"name"`
@@ -87,7 +89,7 @@ func getItems(c *gin.Context) {
 	for _, val := range items {
 		res = append(res, val)
 	}
-	time.Sleep(1 * time.Millisecond) // simulate large list
+	time.Sleep(SLEEP_MS * time.Millisecond) // simulate large list
 	rUnlockStartTime := time.Now().UnixNano()
 	m.RUnlock()
 	rUnlockEndTime := time.Now().UnixNano()
@@ -117,6 +119,7 @@ func getItemByID(c *gin.Context) {
 	rLockEndTime := int64(time.Since(backStartTime))
 	//sleep("getItemByID R")
 	val, ok := items[id]
+	time.Sleep(SLEEP_MS * time.Millisecond)
 	rUnlockStartTime := int64(time.Since(backStartTime))
 	m.RUnlock()
 	rUnlockEndTime := int64(time.Since(backStartTime))
@@ -153,6 +156,7 @@ func postItems(c *gin.Context) {
 	lockEndTime := int64(time.Since(backStartTime))
 	//sleep("postItems W")
 	items[newId] = newItem
+	time.Sleep(SLEEP_MS * time.Millisecond)
 	unlockStartTime := int64(time.Since(backStartTime))
 	m.Unlock()
 	unlockEndTime := int64(time.Since(backStartTime))
@@ -203,6 +207,7 @@ func putItemByID(c *gin.Context) {
 	lockEndTime := int64(time.Since(backStartTime))
 	//sleep("putItemByID W")
 	items[id] = newItem
+	time.Sleep(SLEEP_MS * time.Millisecond)
 	unlockStartTime := int64(time.Since(backStartTime))
 	m.Unlock()
 	unlockEndTime := int64(time.Since(backStartTime))
@@ -243,6 +248,7 @@ func deleteItemByID(c *gin.Context) {
 	lockEndTime := int64(time.Since(backStartTime))
 	//sleep("deleteItemByID W")
 	delete(items, id)
+	time.Sleep(SLEEP_MS * time.Millisecond)
 	unlockStartTime := int64(time.Since(backStartTime))
 	m.Unlock()
 	unlockEndTime := int64(time.Since(backStartTime))

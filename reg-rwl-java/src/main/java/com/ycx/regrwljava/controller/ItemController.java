@@ -22,6 +22,9 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("/api")
 public class ItemController {
+
+    final int SLEEP_MS = 100;
+
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     private static class Item implements Serializable {
         String id;
@@ -113,7 +116,7 @@ public class ItemController {
         long rLockEndTime = System.nanoTime();
         try {
             res = new ArrayList<>(items.values());
-            Thread.sleep(1); // simulate large list
+            Thread.sleep(SLEEP_MS * 1); // simulate large list
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
@@ -138,6 +141,9 @@ public class ItemController {
         long rLockEndTime = System.nanoTime();
         try {
             res = items.getOrDefault(itemId, null);
+            Thread.sleep(SLEEP_MS * 1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         } finally {
             rUnlockStartTime = System.nanoTime();
             readLock.unlock();
@@ -166,6 +172,9 @@ public class ItemController {
         long lockEndTime = System.nanoTime();
         try {
             items.put(newId, newItem);
+            Thread.sleep(SLEEP_MS * 1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         } finally {
             unlockStartTime = System.nanoTime();
             writeLock.unlock();
@@ -206,6 +215,9 @@ public class ItemController {
         long lockEndTime = System.nanoTime();
         try {
             items.put(itemId, newItem);
+            Thread.sleep(SLEEP_MS * 1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         } finally {
             unlockStartTime = System.nanoTime();
             writeLock.unlock();
@@ -244,6 +256,9 @@ public class ItemController {
         long lockEndTime = System.nanoTime();
         try {
             res = items.remove(itemId);
+            Thread.sleep(SLEEP_MS * 1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         } finally {
             unlockStartTime = System.nanoTime();
             writeLock.unlock();

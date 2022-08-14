@@ -9,8 +9,9 @@ import (
 	"time"
 )
 
-var NUM_OF_ITEMS int = 5
-var MAX_OF_EACH_ITEM int = 20
+const NUM_OF_ITEMS int = 5
+const MAX_OF_EACH_ITEM int = 20
+const SLEEP_MS time.Duration = 100
 
 type reducer struct {
 	mtx   sync.Mutex
@@ -45,7 +46,7 @@ func main() {
 	router.GET("/api/items/:id", getItemByID)
 	router.PUT("/api/items/:id", flashBuy)
 
-	router.Run("localhost:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	router.Run("0.0.0.0:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
 //func sleep(msg string) {
@@ -104,7 +105,7 @@ func flashBuy(c *gin.Context) {
 	items[id].mtx.Lock()
 	lockEndTime := time.Now().UnixNano()
 
-	time.Sleep(1 * time.Millisecond)
+	time.Sleep(SLEEP_MS * time.Millisecond)
 
 	switch remaining := items[id].count; {
 	case remaining > 0:
