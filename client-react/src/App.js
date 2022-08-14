@@ -17,7 +17,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import API from './utils/API'
 
 const TOTAL_MINUTES = 60;
-const REQUEST_PER_SEC = 30;
+const REQUEST_PER_SEC = 40;
 
 class Report {
   constructor(isOK, name, jsStartTime, jsEndTime, msg, backStartTime, backEndTime, 
@@ -136,7 +136,8 @@ export default function App() {
     let rLockTime = 0;
     let rLockCnt = 0;
     let rUnlockTime = 0;
-    for (let r of responses) {
+    let totalCnt = Math.min(responses.length, TOTAL_MINUTES * REQUEST_PER_SEC)
+    for (let r of responses.slice(0, TOTAL_MINUTES * REQUEST_PER_SEC)) {
       if (r.isOK) {
         responseTime += r.jsEndTime - r.jsStartTime;
         backTime += r.backEndTime - r.backStartTime;
@@ -158,44 +159,54 @@ export default function App() {
       }
     }
     setSummary(new Summary(
-      responseTime / (responses.length - errorCount),
-      responses.length / (responses[responses.length - 1].jsEndTime - responses[0].jsStartTime) * 1000,
-      backTime / (responses.length - errorCount) / 1000000,
+      responseTime / (totalCnt - errorCount),
+      totalCnt / (responses[totalCnt - 1].jsEndTime - responses[0].jsStartTime) * 1000,
+      backTime / (totalCnt - errorCount) / 1000000,
       lockTime / lockCnt / 1000000,
       unlockTime / lockCnt / 1000000,
       rLockTime / rLockCnt / 1000000,
       rUnlockTime / rLockCnt / 1000000,
-      errorCount / responses.length,
+      errorCount / totalCnt,
       errorInterval / (errorCount - 1) / 1000
     ))
   }
 
-  async function sendRegularReqABatch(isLog) {
+  async function sendRegularReqABatch(sec, isLog) {
     var reqs = [];
+    var hat = 0;
     // W = 1/25
     // ReqW : ReqR = 1:23
     // ReqW = one every 24
-    for (var i = 0; i < Math.floor(REQUEST_PER_SEC / 3); i ++) {
-      if (i % 24 != 0) {
-        for (var j = 0; j < 3; j ++)
-          reqs.push(promiseGetAll(3 * i + j));
+    // 4 every 96
+    for (var i = 0; i < REQUEST_PER_SEC; i ++) {
+      if ((sec * REQUEST_PER_SEC + i) % 96 != 0) {
+          // reqs.push(promiseGetAll(3 * i + j));
+          promiseGetAll(i).then(() => {
+            setResults(responses)
+            if (isLog && i >= REQUEST_PER_SEC - 5)
+            summaryCalculation(responses);
+          })
       } else {
-        reqs.push(promiseGetAll(3 * i + 0));
-        reqs.push(promisePostGetPutDelete(3 * i + 1));
-        reqs.push(promiseGetAll(3 * i + 2));
-      }  
+        promisePostGetPutDelete(i).then(() => {
+          setResults(responses)
+          if (isLog && i >= REQUEST_PER_SEC - 5)
+          summaryCalculation(responses);
+        })
+        i += 3;
+      }
+      await new Promise(r => setTimeout(r, 2));
     }
 
     // reqs = [promiseGetAll(0), promisePostGetPutDelete(0)];
     
-    await Promise.all(reqs).then(() => {
-      console.log('promise partly done with len: ' + responses.length)
-      setResults(responses);
-      setLastTime(new Date());
-      if (isLog) summaryCalculation(responses);
-    });
+    // await Promise.all(reqs).then(() => {
+    //   console.log('promise partly done with len: ' + responses.length)
+    //   setResults(responses);
+    //   setLastTime(new Date());
+    //   if (isLog) summaryCalculation(responses);
+    // });
 
-    console.log('responses now len?' + responses.length)
+    // console.log('responses now len?' + responses.length)
   }
 
   async function promiseFlashBuy(id, reqind) {
@@ -253,7 +264,7 @@ export default function App() {
         sendFlashReqABatch(isLog);
       } else {
         await new Promise(r => setTimeout(r, 1000));
-        sendRegularReqABatch(isLog)
+        sendRegularReqABatch(i, isLog)
       }
     }
     console.log('gere?')
@@ -305,7 +316,7 @@ export default function App() {
         </Stack>
 
         <Typography component="p" paragraph>
-            {results.length} Responses Received. Last time {lastTime.toLocaleString()}
+            {results.length} Responses Received (using first {TOTAL_MINUTES * REQUEST_PER_SEC}). Last time {lastTime.toLocaleString()}
         </Typography>
 
         <div style={{width: "100%", whiteSpace: "pre-line"}}>{
