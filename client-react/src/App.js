@@ -13,7 +13,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import API from './utils/API'
 
 const TOTAL_MINUTES = 60;
-const REQUEST_PER_SEC = 40;
+const REQUEST_PER_SEC = 10;
 
 class Report {
   constructor(isOK, name, jsStartTime, jsEndTime, msg, backStartTime, backEndTime, 
@@ -90,7 +90,10 @@ export default function App() {
     let rLockCnt = 0;
     let rUnlockTime = 0;
     let totalCnt = Math.min(responses.length, TOTAL_MINUTES * REQUEST_PER_SEC)
+    let minBackStartTime = responses[0].backStartTime, maxBackEndTime = responses[0].backEndTime;
     for (let r of responses.slice(0, TOTAL_MINUTES * REQUEST_PER_SEC)) {
+      minBackStartTime = Math.min(minBackStartTime, r.backStartTime);
+      maxBackEndTime = Math.max(maxBackEndTime, r.backEndTime);
       if (r.isOK) {
         responseTime += r.jsEndTime - r.jsStartTime;
         backTime += r.backEndTime - r.backStartTime;
@@ -113,7 +116,7 @@ export default function App() {
     }
     setSummary(new Summary(
       responseTime / (totalCnt - errorCount),
-      totalCnt / (responses[totalCnt - 1].jsEndTime - responses[0].jsStartTime) * 1000,
+      totalCnt / (maxBackEndTime - minBackStartTime) * 1000000000,
       backTime / (totalCnt - errorCount) / 1000000,
       lockTime / lockCnt / 1000000,
       unlockTime / lockCnt / 1000000,
