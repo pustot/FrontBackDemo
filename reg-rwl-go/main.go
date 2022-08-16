@@ -104,7 +104,7 @@ func getItems(c *gin.Context) {
 // getItemByID locates the album whose ID value matches the id
 // parameter sent by the client, then returns that album as a response.
 func getItemByID(c *gin.Context) {
-	backStartTime := time.Now()
+	backStartTime := time.Now().UnixNano()
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
@@ -114,19 +114,19 @@ func getItemByID(c *gin.Context) {
 
 	// Loop over the list of albums, looking for
 	// an album whose ID value matches the parameter.
-	rLockStartTime := int64(time.Since(backStartTime))
+	rLockStartTime := time.Now().UnixNano()
 	m.RLock()
-	rLockEndTime := int64(time.Since(backStartTime))
+	rLockEndTime := time.Now().UnixNano()
 	//sleep("getItemByID R")
 	val, ok := items[id]
 	time.Sleep(SLEEP_MS * time.Millisecond)
-	rUnlockStartTime := int64(time.Since(backStartTime))
+	rUnlockStartTime := time.Now().UnixNano()
 	m.RUnlock()
-	rUnlockEndTime := int64(time.Since(backStartTime))
+	rUnlockEndTime := time.Now().UnixNano()
 	//sleep("getItemByID R Unlocked")
 	if ok {
 		c.JSON(http.StatusOK, ReportWithItem{
-			Item: val, BackStartTime: 0, BackEndTime: int64(time.Since(backStartTime)),
+			Item: val, BackStartTime: backStartTime, BackEndTime: time.Now().UnixNano(),
 			RLockTime: rLockEndTime - rLockStartTime, RUnlockTime: rUnlockEndTime - rUnlockStartTime,
 		})
 		return
@@ -137,7 +137,7 @@ func getItemByID(c *gin.Context) {
 
 // postItems adds an album from JSON received in the request body.
 func postItems(c *gin.Context) {
-	backStartTime := time.Now()
+	backStartTime := time.Now().UnixNano()
 	var rawItem itemWoID
 
 	// Call BindJSON to bind the received JSON to
@@ -151,24 +151,24 @@ func postItems(c *gin.Context) {
 	newItem := item{ID: newId.String(), Name: rawItem.Name, Count: rawItem.Count} // , Price: rawItem.Price
 
 	// Add the new album to the slice.
-	lockStartTime := int64(time.Since(backStartTime))
+	lockStartTime := time.Now().UnixNano()
 	m.Lock()
-	lockEndTime := int64(time.Since(backStartTime))
+	lockEndTime := time.Now().UnixNano()
 	//sleep("postItems W")
 	items[newId] = newItem
 	time.Sleep(SLEEP_MS * time.Millisecond)
-	unlockStartTime := int64(time.Since(backStartTime))
+	unlockStartTime := time.Now().UnixNano()
 	m.Unlock()
-	unlockEndTime := int64(time.Since(backStartTime))
+	unlockEndTime := time.Now().UnixNano()
 	//sleep("postItems W Unlocked")
 	c.JSON(http.StatusCreated, ReportWithItem{
-		Item: newItem, BackStartTime: 0, BackEndTime: int64(time.Since(backStartTime)),
+		Item: newItem, BackStartTime: backStartTime, BackEndTime: time.Now().UnixNano(),
 		LockTime: lockEndTime - lockStartTime, UnlockTime: unlockEndTime - unlockStartTime,
 	})
 }
 
 func putItemByID(c *gin.Context) {
-	backStartTime := time.Now()
+	backStartTime := time.Now().UnixNano()
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
@@ -176,14 +176,14 @@ func putItemByID(c *gin.Context) {
 		return
 	}
 
-	rLockStartTime := int64(time.Since(backStartTime))
+	rLockStartTime := time.Now().UnixNano()
 	m.RLock()
-	rLockEndTime := int64(time.Since(backStartTime))
+	rLockEndTime := time.Now().UnixNano()
 	//sleep("putItemByID R")
 	_, ok := items[id]
-	rUnlockStartTime := int64(time.Since(backStartTime))
+	rUnlockStartTime := time.Now().UnixNano()
 	m.RUnlock()
-	rUnlockEndTime := int64(time.Since(backStartTime))
+	rUnlockEndTime := time.Now().UnixNano()
 	//sleep("putItemByID R Unlocked")
 	if !ok {
 		c.JSON(http.StatusNotFound, gin.H{"message": "item not found"})
@@ -202,25 +202,25 @@ func putItemByID(c *gin.Context) {
 	newItem := item{ID: id.String(), Name: rawItem.Name, Count: rawItem.Count} // , Price: rawItem.Price
 
 	// Add the new album to the slice.
-	lockStartTime := int64(time.Since(backStartTime))
+	lockStartTime := time.Now().UnixNano()
 	m.Lock()
-	lockEndTime := int64(time.Since(backStartTime))
+	lockEndTime := time.Now().UnixNano()
 	//sleep("putItemByID W")
 	items[id] = newItem
 	time.Sleep(SLEEP_MS * time.Millisecond)
-	unlockStartTime := int64(time.Since(backStartTime))
+	unlockStartTime := time.Now().UnixNano()
 	m.Unlock()
-	unlockEndTime := int64(time.Since(backStartTime))
+	unlockEndTime := time.Now().UnixNano()
 	//sleep("putItemByID W Unlocked")
 	c.JSON(http.StatusCreated, ReportWithItem{
-		Item: newItem, BackStartTime: 0, BackEndTime: int64(time.Since(backStartTime)),
+		Item: newItem, BackStartTime: backStartTime, BackEndTime: time.Now().UnixNano(),
 		LockTime: lockEndTime - lockStartTime, UnlockTime: unlockEndTime - unlockStartTime,
 		RLockTime: rLockEndTime - rLockStartTime, RUnlockTime: rUnlockEndTime - rUnlockStartTime,
 	})
 }
 
 func deleteItemByID(c *gin.Context) {
-	backStartTime := time.Now()
+	backStartTime := time.Now().UnixNano()
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
@@ -228,14 +228,14 @@ func deleteItemByID(c *gin.Context) {
 		return
 	}
 
-	rLockStartTime := int64(time.Since(backStartTime))
+	rLockStartTime := time.Now().UnixNano()
 	m.RLock()
-	rLockEndTime := int64(time.Since(backStartTime))
+	rLockEndTime := time.Now().UnixNano()
 	//sleep("deleteItemByID R")
 	res, ok := items[id]
-	rUnlockStartTime := int64(time.Since(backStartTime))
+	rUnlockStartTime := time.Now().UnixNano()
 	m.RUnlock()
-	rUnlockEndTime := int64(time.Since(backStartTime))
+	rUnlockEndTime := time.Now().UnixNano()
 	//sleep("deleteItemByID R Unlocked")
 	if !ok {
 		c.JSON(http.StatusNotFound, gin.H{"message": "item not found"})
@@ -243,18 +243,18 @@ func deleteItemByID(c *gin.Context) {
 	}
 
 	// Add the new album to the slice.
-	lockStartTime := int64(time.Since(backStartTime))
+	lockStartTime := time.Now().UnixNano()
 	m.Lock()
-	lockEndTime := int64(time.Since(backStartTime))
+	lockEndTime := time.Now().UnixNano()
 	//sleep("deleteItemByID W")
 	delete(items, id)
 	time.Sleep(SLEEP_MS * time.Millisecond)
-	unlockStartTime := int64(time.Since(backStartTime))
+	unlockStartTime := time.Now().UnixNano()
 	m.Unlock()
-	unlockEndTime := int64(time.Since(backStartTime))
+	unlockEndTime := time.Now().UnixNano()
 	//sleep("deleteItemByID W Unlocked")
 	c.JSON(http.StatusOK, ReportWithItem{
-		Item: res, BackStartTime: 0, BackEndTime: int64(time.Since(backStartTime)),
+		Item: res, BackStartTime: backStartTime, BackEndTime: time.Now().UnixNano(),
 		LockTime: lockEndTime - lockStartTime, UnlockTime: unlockEndTime - unlockStartTime,
 		RLockTime: rLockEndTime - rLockStartTime, RUnlockTime: rUnlockEndTime - rUnlockStartTime,
 	})

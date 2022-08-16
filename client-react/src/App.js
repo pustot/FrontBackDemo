@@ -13,7 +13,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import API from './utils/API'
 
 const TOTAL_MINUTES = 60;
-const REQUEST_PER_SEC = 10;
+const REQUEST_PER_SEC = 50;
 
 class Report {
   constructor(isOK, name, jsStartTime, jsEndTime, msg, backStartTime, backEndTime, 
@@ -133,9 +133,9 @@ export default function App() {
     // W = 1/25
     // ReqW : ReqR = 1:23
     // ReqW = one every 24
-    // 4 every 96
+    // 3 every 75
     for (var i = 0; i < REQUEST_PER_SEC; i ++) {
-      if ((sec * REQUEST_PER_SEC + i) % 96 != 0) {
+      if ((sec * REQUEST_PER_SEC + i) % 75 != 0) {
           promiseGetAll(i).then(() => {
             setResults(responses)
             if (isLog && i >= REQUEST_PER_SEC - 5)
