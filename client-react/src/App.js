@@ -12,8 +12,9 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import API from './utils/API'
 
+const REQUEST_PER_SEC = 5;
+
 const TOTAL_MINUTES = 60;
-const REQUEST_PER_SEC = 50;
 
 class Report {
   constructor(isOK, name, jsStartTime, jsEndTime, msg, backStartTime, backEndTime, 
@@ -63,7 +64,7 @@ export default function App() {
   async function send(type) {
     responses = [];
     setLoading(true);
-    for (let i = 0; i < TOTAL_MINUTES; i ++) {
+    for (let i = 0; i < TOTAL_MINUTES + 2; i ++) {
       let isLog = (i%10 == 0 || i >= TOTAL_MINUTES - 3) ? true : false;
       if (type == 'fls') {
         await new Promise(r => setTimeout(r, 1000));  // sleep
@@ -77,7 +78,7 @@ export default function App() {
     setLoading(false);
   }
 
-  function summaryCalculation(responses) {
+  function summaryCalculation() {
     let responseTime = 0;
     let errorCount = 0;
     let prevErrorEnd = 0;
@@ -139,13 +140,13 @@ export default function App() {
           promiseGetAll(i).then(() => {
             setResults(responses)
             if (isLog && i >= REQUEST_PER_SEC - 5)
-            summaryCalculation(responses);
+            summaryCalculation();
           })
       } else {
         promisePostGetPutDelete(i).then(() => {
           setResults(responses)
           if (isLog && i >= REQUEST_PER_SEC - 5)
-          summaryCalculation(responses);
+          summaryCalculation();
         })
         i += 3;
       }
@@ -162,7 +163,7 @@ export default function App() {
       console.log('promise partly done with len: ' + responses.length)
       setResults(responses);
       setLastTime(new Date());
-      if (isLog) summaryCalculation(responses);
+      if (isLog) summaryCalculation();
     });
 
     console.log('responses now len?' + responses.length)
@@ -170,7 +171,8 @@ export default function App() {
 
   const handleClickRefresh = () => {
     setResults(responses);
-    summaryCalculation(responses);
+    summaryCalculation();
+    console.log(summary)
   }
 
   async function promiseGetAll(ind) {
@@ -282,7 +284,7 @@ export default function App() {
               />} label="Switch Result" />
 
           <Tooltip title="to handle uncertainty of React setState()">
-            <Button onClick={handleClickRefresh}>Refresh Result</Button>
+            <Button onClick={() => handleClickRefresh()}>Refresh Result</Button>
           </Tooltip>
 
         </Stack>
