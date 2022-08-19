@@ -32,13 +32,25 @@ with open(os.path.join(dir_path, 'Results.txt')) as f:
                 in_brace = False
                 res[currms][currreq].append(currdic)
             else:
-                k, v = text.split(':')[0].strip().replace('"', ''), float(text.split(':')[1].strip().replace(',', ''))
-                currdic[k] = v
+                if text.split(':')[1].strip().replace(',', '') != 'null':
+                    k, v = text.split(':')[0].strip().replace('"', ''), float(text.split(':')[1].strip().replace(',', ''))
+                    currdic[k] = v
 
 print(res)
 
+kpi2label = {
+    "responseTime": "Response Time (ms)",
+    "throughput": "Throughput (req/s)",
+    "backTime": "Callback Execution Time (ms)",
+    "lockTime": "Time for Adding Write Lock (ms)",
+    "unlockTime": "Time for Write Unlocking (ms)",
+    "rLockTime": "Time for Adding Read Lock (ms)",
+    "rUnlockTime": "Time for Read Unlocking (ms)",
+    "errorRate": "Error Rate (%)",
+    "errorInterval": "Mean Time Between Failures (ms)",
+}
 designs = ['reg', 'fls']
-for des in designs[:1]:  # !!! fls not done
+for des in designs:  # !!! fls not done
     X, gY, jY = [], [], []
     X = list(res[des + '-go'].keys())
     for kpi in res[des + '-go'][X[0]][0].keys():
@@ -66,8 +78,13 @@ for des in designs[:1]:  # !!! fls not done
         plt.plot(X, jY, 'b', label="Java")
         plt.legend()
         plt.xlabel('Requests per Second')
-        plt.ylabel(kpi)
-        plt.title(kpi)
+        if des == 'fls' and kpi == "lockTime": 
+            plt.ylabel("Time for Adding Mutex Lock (ms)")
+        elif  des == 'fls' and kpi == "unlockTime":
+            plt.ylabel("Time for Mutex Unlocking (ms)")
+        else:
+            plt.ylabel(kpi2label[kpi])
+        # plt.title(kpi)
         # plt.axis('equal')
 
         plt.savefig(os.path.join(dir_path, 'images', des + '-' + kpi + '.png'), dpi=500)

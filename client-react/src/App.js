@@ -12,7 +12,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import API from './utils/API'
 
-const REQUEST_PER_SEC = 5;
+const REQUEST_PER_SEC = 45;
 
 const TOTAL_MINUTES = 60;
 
@@ -160,13 +160,13 @@ export default function App() {
       reqs.push(promiseFlashBuy(i%5, i));
     }
     await Promise.all(reqs).then(() => {
-      console.log('promise partly done with len: ' + responses.length)
+      // console.log('promise partly done with len: ' + responses.length)
       setResults(responses);
       setLastTime(new Date());
       if (isLog) summaryCalculation();
     });
 
-    console.log('responses now len?' + responses.length)
+    // console.log('responses now len?' + responses.length)
   }
 
   const handleClickRefresh = () => {

@@ -1,4 +1,38 @@
 reg-go
+55
+{
+	"responseTime": 13579.071818181817,
+	"throughput": 36.61351142463406,
+	"backTime": 110.04415868121212,
+	"lockTime": 590.7309817142857,
+	"unlockTime": 0.012587619047619047,
+	"rLockTime": 2.0126529338640538,
+	"rUnlockTime": 0.0003731007348438457,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 6440.969696969697,
+	"throughput": 41.86117516677127,
+	"backTime": 110.16626144969698,
+	"lockTime": 595.0369552619047,
+	"unlockTime": 0.0100755,
+	"rLockTime": 2.0640967905695042,
+	"rUnlockTime": 0.00036563962033067974,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 11165.612424242425,
+	"throughput": 36.117926805658385,
+	"backTime": 109.1575448048485,
+	"lockTime": 545.9749045238095,
+	"unlockTime": 0.013333761904761904,
+	"rLockTime": 1.6927398061849357,
+	"rUnlockTime": 0.0003712412737293325,
+	"errorRate": 0,
+	"errorInterval": 0
+}
 50
 {
 	"responseTime": 1237.6915072171869,
@@ -341,6 +375,29 @@ reg-go
 }
 
 reg-java
+55
+{
+	"responseTime": 19864.421818181818,
+	"throughput": 31.974211235506584,
+	"backTime": 107.06782238151514,
+	"lockTime": 87.78233330434783,
+	"unlockTime": 0.036731760869565214,
+	"rLockTime": 5.687686898586355,
+	"rUnlockTime": 0.00299350184388445,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 21351.47074871173,
+	"throughput": 31.422725709543258,
+	"backTime": 106.77483022764474,
+	"lockTime": 82.62895160869566,
+	"unlockTime": 0.03764867391304348,
+	"rLockTime": 5.456105814017829,
+	"rUnlockTime": 0.0032049686443283124,
+	"errorRate": 0,
+	"errorInterval": 0
+}
 50
 {
 	"responseTime": 4407.657666666667,
@@ -650,3 +707,567 @@ reg-java
 }
 
 fls-go
+55
+{
+	"responseTime": 17806.66393939394,
+	"throughput": 33.13512046185085,
+	"backTime": 107.55236848484849,
+	"lockTime": 6.988312181212121,
+	"unlockTime": 0.0008101363636363637,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 15705.680844155844,
+	"throughput": 33.23877162385325,
+	"backTime": 106.88615613506494,
+	"lockTime": 6.326477458441558,
+	"unlockTime": 0.0007031762987012987,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+50
+{
+	"responseTime": 13194.33,
+	"throughput": 33.661484804410804,
+	"backTime": 107.62463812266667,
+	"lockTime": 7.069386221333334,
+	"unlockTime": 0.0007608033333333333,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 13863.945333333333,
+	"throughput": 32.947184505605236,
+	"backTime": 107.10699434666667,
+	"lockTime": 6.539606623333333,
+	"unlockTime": 0.00077722,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+45
+{
+	"responseTime": 15895.474814814816,
+	"throughput": 29.404072938644532,
+	"backTime": 102.24448644740741,
+	"lockTime": 1.721026161111111,
+	"unlockTime": 0.0003281840740740741,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 5045.833115468409,
+	"throughput": 32.93982937980639,
+	"backTime": 108.44422190849674,
+	"lockTime": 7.896365266230937,
+	"unlockTime": 0.0007732104575163398,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 15137.56962962963,
+	"throughput": 29.865217048992985,
+	"backTime": 102.20218386962964,
+	"lockTime": 1.666613695925926,
+	"unlockTime": 0.00036260222222222224,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+40
+{
+	"responseTime": 5903.69125,
+	"throughput": 33.069295497055094,
+	"backTime": 108.75168245333333,
+	"lockTime": 8.19726038375,
+	"unlockTime": 0.00087252875,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 4525.4920833333335,
+	"throughput": 34.13403241385194,
+	"backTime": 107.53690858666667,
+	"lockTime": 6.9738125858333335,
+	"unlockTime": 0.00075827125,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 8544.47375,
+	"throughput": 29.339327999075262,
+	"backTime": 108.96633301333334,
+	"lockTime": 8.36921103875,
+	"unlockTime": 0.0007210791666666667,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+35
+{
+	"responseTime": 1640.1109523809523,
+	"throughput": 33.323478757627676,
+	"backTime": 109.35211044571427,
+	"lockTime": 8.781846078095239,
+	"unlockTime": 0.0009724461904761906,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 1618.89,
+	"throughput": 32.922479518179244,
+	"backTime": 112.2990976,
+	"lockTime": 11.743003412857144,
+	"unlockTime": 0.001015170476190476,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 1719.0695238095238,
+	"throughput": 33.0197629387014,
+	"backTime": 110.73733193142857,
+	"lockTime": 10.171722504285714,
+	"unlockTime": 0.0008619880952380951,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+30
+{
+	"responseTime": 538.6994444444445,
+	"throughput": 29.082957607717248,
+	"backTime": 109.52453034666667,
+	"lockTime": 8.968005786666668,
+	"unlockTime": 0.000908265,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 573.5955555555555,
+	"throughput": 29.21537918668174,
+	"backTime": 108.2944384,
+	"lockTime": 7.736764434444444,
+	"unlockTime": 0.0007693966666666666,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 588.5588888888889,
+	"throughput": 29.241742375244527,
+	"backTime": 110.73097486222223,
+	"lockTime": 10.17566735111111,
+	"unlockTime": 0.000760013888888889,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+25
+{
+	"responseTime": 498.732,
+	"throughput": 24.352054356657177,
+	"backTime": 108.91561011200001,
+	"lockTime": 8.358596861333332,
+	"unlockTime": 0.00082712,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 495.194,
+	"throughput": 24.430596720683948,
+	"backTime": 108.21270272,
+	"lockTime": 7.6675773786666666,
+	"unlockTime": 0.0007745866666666667,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+20
+{
+	"responseTime": 415.565,
+	"throughput": 19.602460839615112,
+	"backTime": 108.11179605333332,
+	"lockTime": 7.55647747,
+	"unlockTime": 0.0007473658333333333,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 428.72583333333336,
+	"throughput": 19.57077930467432,
+	"backTime": 107.94505984,
+	"lockTime": 7.402235593333334,
+	"unlockTime": 0.0006847658333333334,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+15
+{
+	"responseTime": 360.2788888888889,
+	"throughput": 14.82954961544745,
+	"backTime": 109.33799964444445,
+	"lockTime": 8.80449359888889,
+	"unlockTime": 0.0006748622222222223,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 358.85,
+	"throughput": 14.821388529777112,
+	"backTime": 109.02554652444445,
+	"lockTime": 8.460953016666668,
+	"unlockTime": 0.0006177288888888888,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+10
+{
+	"responseTime": 270.51166666666666,
+	"throughput": 9.898347612610412,
+	"backTime": 111.34218965333334,
+	"lockTime": 10.803907028333334,
+	"unlockTime": 0.00052401,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 274.0083333333333,
+	"throughput": 9.899493875783444,
+	"backTime": 113.74771712,
+	"lockTime": 13.181842098333332,
+	"unlockTime": 0.0008045950000000001,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+5
+{
+	"responseTime": 202.24,
+	"throughput": 5.003437006312872,
+	"backTime": 100.50345301333334,
+	"lockTime": 0.0002685333333333334,
+	"unlockTime": 0.0002634033333333333,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+
+fls-java
+55
+{
+	"responseTime": 18403.243333333332,
+	"throughput": 33.64671077736134,
+	"backTime": 106.19475901181819,
+	"lockTime": 6.03561445030303,
+	"unlockTime": 0.0043734027272727275,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 13919.181818181818,
+	"throughput": 35.60858665854911,
+	"backTime": 106.15586210454546,
+	"lockTime": 5.988213076969697,
+	"unlockTime": 0.004696825757575758,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 18192.099393939396,
+	"throughput": 34.621043935252544,
+	"backTime": 107.29315293757575,
+	"lockTime": 7.116918654242424,
+	"unlockTime": 0.005176525757575758,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+50
+{
+	"responseTime": 17145.792,
+	"throughput": 31.869448660319573,
+	"backTime": 107.36946645133332,
+	"lockTime": 7.1957501766666665,
+	"unlockTime": 0.004815872333333334,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 14938.331,
+	"throughput": 33.65782842312892,
+	"backTime": 107.04813475399999,
+	"lockTime": 6.875116713666666,
+	"unlockTime": 0.004793095666666667,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+45
+{
+	"responseTime": 11480.602222222222,
+	"throughput": 32.398432268373156,
+	"backTime": 106.92673569518519,
+	"lockTime": 6.750280103333334,
+	"unlockTime": 0.005282361481481482,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 10172.413333333334,
+	"throughput": 33.16208082906679,
+	"backTime": 107.45877199259259,
+	"lockTime": 7.27171625037037,
+	"unlockTime": 0.005217394074074074,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+40
+{
+	"responseTime": 5286.267916666667,
+	"throughput": 33.11141714079644,
+	"backTime": 107.33995328541667,
+	"lockTime": 7.161395424999999,
+	"unlockTime": 0.005529246666666667,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 5472.519166666667,
+	"throughput": 33.33288893648029,
+	"backTime": 106.84737507291668,
+	"lockTime": 6.67099293625,
+	"unlockTime": 0.0046956325,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+35
+{
+	"responseTime": 1520.37,
+	"throughput": 32.33930182690341,
+	"backTime": 106.91468426142856,
+	"lockTime": 6.735268105714286,
+	"unlockTime": 0.005199111904761905,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 1841.1690476190477,
+	"throughput": 32.378760367627244,
+	"backTime": 107.94883758380952,
+	"lockTime": 7.757859727142858,
+	"unlockTime": 0.005421709523809524,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+30
+{
+	"responseTime": 532.5605555555555,
+	"throughput": 29.16954238212673,
+	"backTime": 108.271494975,
+	"lockTime": 8.093138986666666,
+	"unlockTime": 0.005311488888888889,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 478.21666666666664,
+	"throughput": 29.254006308665204,
+	"backTime": 106.665099735,
+	"lockTime": 6.494745396666667,
+	"unlockTime": 0.00534333,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 458.5627777777778,
+	"throughput": 29.267444284438525,
+	"backTime": 106.81005195055556,
+	"lockTime": 6.643099387222222,
+	"unlockTime": 0.005858464444444445,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+25
+{
+	"responseTime": 463.8706666666667,
+	"throughput": 23.885169723768,
+	"backTime": 106.54679740133334,
+	"lockTime": 6.383826598666667,
+	"unlockTime": 0.005207339333333333,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 399.39866666666666,
+	"throughput": 24.434158004192955,
+	"backTime": 108.729446228,
+	"lockTime": 8.549055608,
+	"unlockTime": 0.006331238,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 396.50533333333334,
+	"throughput": 24.40584753303236,
+	"backTime": 107.54052188333334,
+	"lockTime": 7.368584279333334,
+	"unlockTime": 0.005672404666666666,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+20
+{
+	"responseTime": 346.92083333333335,
+	"throughput": 19.639667935505962,
+	"backTime": 108.65842361166666,
+	"lockTime": 8.4609362275,
+	"unlockTime": 0.005971371666666667,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 349.19,
+	"throughput": 19.600261423380267,
+	"backTime": 109.50820304999999,
+	"lockTime": 9.3210987225,
+	"unlockTime": 0.005654344166666667,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+15
+{
+	"responseTime": 284.9088888888889,
+	"throughput": 14.817270568750269,
+	"backTime": 110.00612967333333,
+	"lockTime": 9.801615104444444,
+	"unlockTime": 0.005397493333333333,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 313.5511111111111,
+	"throughput": 14.828043817764502,
+	"backTime": 110.74647503,
+	"lockTime": 10.52351956,
+	"unlockTime": 0.004408493333333333,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+10
+{
+	"responseTime": 221.11333333333334,
+	"throughput": 9.940297622518047,
+	"backTime": 109.20682672833334,
+	"lockTime": 9.024929405,
+	"unlockTime": 0.0038798083333333334,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+{
+	"responseTime": 233.22,
+	"throughput": 9.927337252733928,
+	"backTime": 109.11751061166666,
+	"lockTime": 8.913279218333333,
+	"unlockTime": 0.003876145,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+5
+{
+	"responseTime": 194.68666666666667,
+	"throughput": 5.01089933718114,
+	"backTime": 100.28991382333334,
+	"lockTime": 0.0013468766666666669,
+	"unlockTime": 0.008245093333333333,
+	"rLockTime": null,
+	"rUnlockTime": null,
+	"errorRate": 0,
+	"errorInterval": 0
+}
+
