@@ -3,6 +3,12 @@ from collections import defaultdict
 import os
 import matplotlib.pyplot as plt
 
+font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 22}
+
+plt.rc('font', **font)
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 micservs = ['reg-go', 'reg-java', 'fls-go', 'fls-java']
@@ -41,7 +47,7 @@ print(res)
 kpi2label = {
     "responseTime": "Response Time (ms)",
     "throughput": "Throughput (req/s)",
-    "backTime": "Callback Execution Time (ms)",
+    "backTime": "Service Execution Time (ms)",
     "lockTime": "Time for Adding Write Lock (ms)",
     "unlockTime": "Time for Write Unlocking (ms)",
     "rLockTime": "Time for Adding Read Lock (ms)",
@@ -67,13 +73,13 @@ for des in designs:  # !!! fls not done
                 curr.append(result[kpi])
             jY.append(sum(curr) / len(curr))
 
-        font = {'family': 'SimHei',
-                'weight': 'bold',
-                'size': '16'}
-        plt.rc('font', **font)  # 步骤一（设置字体的更多属性）
+        # font = {'family': 'SimHei',
+        #         'weight': 'bold',
+        #         'size': '16'}
+        # plt.rc('font', **font)  # 步骤一（设置字体的更多属性）
         plt.rc('axes', unicode_minus=False)  # 步骤二（解决坐标轴负数的负号显示问题）
 
-        plt.figure(figsize=(8, 5))
+        plt.figure(figsize=(13, 7))
         plt.plot(X, gY, 'r', label="Go")
         plt.plot(X, jY, 'b', label="Java")
         plt.legend()
